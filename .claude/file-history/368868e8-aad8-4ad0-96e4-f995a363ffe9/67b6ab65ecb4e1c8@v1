@@ -1,0 +1,187 @@
+/* Footer Component Styles */
+
+footer {
+  background-color: var(--c-black);
+  padding-top: var(--large);
+  padding-bottom: var(--h2);
+  position: relative;
+  z-index: 40;
+  overflow: hidden;
+}
+
+footer .underlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--c-black);
+  background-image: url('images/stone-wall.webp');
+  background-repeat: repeat;
+  background-size: 50%;
+  mask-image: url('images/mask-fade-20.webp');
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+}
+
+footer .-w {
+  position: relative;
+  z-index: 10;
+}
+
+footer .-w.block {
+  background-color: var(--c-white);
+  color: var(--c-black);
+  border-radius: var(--h3);
+  padding: var(--h6);
+  position: relative;
+  z-index: 50;
+}
+
+footer .-w.block:before,
+footer .-w.block:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--vw, 1vw) * 24);
+  height: calc(var(--vw, 1vw) * 12);
+  background-color: var(--c-white);
+  mask-image: url('images/star-mask.svg');
+  mask-size: 100% auto;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  z-index: 1;
+}
+
+footer .-w.block:before {
+  bottom: calc(100% - 1px);
+  mask-position: top;
+}
+
+footer .-w.block:after {
+  content: "";
+  top: calc(100% - 1px);
+  background-color: var(--c-yellow);
+  mask-position: bottom;
+}
+
+footer .-w.block nav {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--g-gap);
+  margin-bottom: var(--h3);
+  position: relative;
+  z-index: 1;
+}
+
+footer .-w.block nav a,
+footer .-w.block nav span {
+  color: var(--c-black);
+  font-family: var(--font-t-2);
+  padding: var(--p);
+  border-radius: var(--g-gap);
+  position: relative;
+  transition: color 0.3s var(--f-cubic);
+}
+
+footer .-w.block nav a:before {
+  content: "";
+  position: absolute;
+  bottom: var(--h6);
+  left: 0;
+  width: var(--mm);
+  height: var(--mm);
+  background-image: linear-gradient(0deg, transparent 50%, var(--c-black) 50%),
+                    linear-gradient(90deg, transparent 50%, var(--c-black) 50%);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 1px 100%;
+  transform: scale(0.65) rotate(0deg);
+  transition: transform 1.2s var(--f-cubic-in);
+}
+
+@media (min-width: 1024px) {
+  footer .-w.block nav a:hover:before {
+    transform: scale(1) rotate(-180deg);
+  }
+
+  footer .-w.block nav a:hover {
+    color: var(--c-brown);
+  }
+}
+
+footer .-w.block nav span.contacts {
+  cursor: not-allowed;
+  position: relative;
+}
+
+footer .-w.block nav span.contacts:after {
+  content: "";
+  position: absolute;
+  bottom: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--c-black);
+  transform-origin: 0 50%;
+  transform: scaleX(1);
+  transition: transform 0.9s var(--f-cubic);
+}
+
+footer .-w.after {
+  margin-top: var(--h1);
+  padding-top: var(--h1);
+  padding-bottom: var(--p);
+}
+
+footer .-w.after a {
+  color: var(--c-yellow);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--p);
+  transition: color 0.9s var(--f-cubic);
+}
+
+footer .-w.after a .-h5 {
+  display: block;
+  line-height: 0.85;
+}
+
+footer .-w.after a .the {
+  margin-left: 0.85em;
+}
+
+footer .-w.after a .assembly {
+  margin-left: 1em;
+}
+
+@media (min-width: 1024px) {
+  footer .-w.block:before,
+  footer .-w.block:after {
+    height: calc(var(--vw, 1vw) * 3);
+    width: calc(var(--vw, 1vw) * 6);
+  }
+
+  footer .-w.after a:hover {
+    color: var(--c-white);
+  }
+}
+
+/* Stone decoration (parallax on footer) */
+footer .stone-3 {
+  position: absolute;
+  bottom: 10%;
+  right: 5%;
+  width: 25%;
+  z-index: 50;
+  transform: rotate(60deg) translateY(calc(var(--progress) * -150%));
+  opacity: calc(var(--progress) + 0.3);
+}
+
+footer .stone-3 img {
+  width: 100%;
+  opacity: 0.5;
+}

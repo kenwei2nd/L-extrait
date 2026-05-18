@@ -1,0 +1,139 @@
+/* ============================================================
+   About Section
+   Editorial statement + 2×2 feature card grid
+   Background: var(--paper) — inherits the hero gradient endpoint
+   ============================================================ */
+
+.about {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-display);
+  padding: clamp(80px, 12vw, 140px) clamp(24px, 6vw, 80px);
+}
+
+/* ---------- Statement block ---------- */
+.statement {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  grid-template-rows: auto auto;
+  gap: 0 clamp(40px, 6vw, 80px);
+  align-items: start;
+}
+
+.eyebrow {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  font-size: clamp(10px, 0.8vw, 12px);
+  font-weight: 500;
+  letter-spacing: 0.38em;
+  text-indent: 0.38em;
+  color: rgba(10, 13, 18, 0.38);
+  padding-top: 0.5em;
+  opacity: 0;
+}
+
+.headline {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  font-size: clamp(36px, 5.5vw, 80px);
+  font-weight: 600;
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin-bottom: clamp(24px, 4vh, 40px);
+  opacity: 0;
+}
+
+.headline em {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.body {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(10, 13, 18, 0.55);
+  max-width: 560px;
+  opacity: 0;
+}
+
+/* ---------- Divider ---------- */
+.divider {
+  max-width: 1440px;
+  margin: clamp(56px, 8vh, 88px) auto;
+  height: 1px;
+  background: rgba(10, 13, 18, 0.1);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* ---------- Feature grid ---------- */
+.grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(40px, 6vh, 64px) clamp(40px, 6vw, 80px);
+}
+
+.card {
+  opacity: 0;
+}
+
+.cardTitle {
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: clamp(14px, 2vh, 20px);
+}
+
+.cardRule {
+  width: 28px;
+  height: 1px;
+  background: rgba(10, 13, 18, 0.25);
+  margin-bottom: clamp(14px, 2vh, 20px);
+}
+
+.cardBody {
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(10, 13, 18, 0.52);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .statement {
+    grid-template-columns: 1fr;
+  }
+
+  .eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: clamp(12px, 2vh, 20px);
+  }
+
+  .headline {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .body {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

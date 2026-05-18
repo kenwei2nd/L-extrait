@@ -1,0 +1,164 @@
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { feature } from 'topojson-client'
+import { gsap, ScrollTrigger } from '@animations/gsap.config'
+import styles from './GlobeSection.module.css'
+import worldTopo from 'world-atlas/countries-110m.json'
+
+const Globe = lazy(() => import('react-globe.gl'))
+
+const COUNTRIES = feature(worldTopo, worldTopo.objects.countries).features
+
+const ARCS = [
+  { startLat: 25.2, startLng: 55.3,  endLat: 51.5,  endLng: -0.1,   label: 'Dubai → London' },
+  { startLat: 25.2, startLng: 55.3,  endLat: 40.7,  endLng: -74.0,  label: 'Dubai → New York' },
+  { startLat: 25.2, startLng: 55.3,  endLat: 1.3,   endLng: 103.8,  label: 'Dubai → Singapore' },
+  { startLat: 51.5, startLng: -0.1,  endLat: 40.7,  endLng: -74.0,  label: 'London → New York' },
+  { startLat: 51.5, startLng: -0.1,  endLat: 35.7,  endLng: 139.7,  label: 'London → Tokyo' },
+  { startLat: 40.7, startLng: -74.0, endLat: 34.0,  endLng: -118.2, label: 'New York → LA' },
+  { startLat: 48.9, startLng: 2.3,   endLat: 25.2,  endLng: 55.3,   label: 'Paris → Dubai' },
+  { startLat: 35.7, startLng: 139.7, endLat: -33.9, endLng: 151.2,  label: 'Tokyo → Sydney' },
+  { startLat: 1.3,  startLng: 103.8, endLat: -33.9, endLng: 151.2,  label: 'Singapore → Sydney' },
+  { startLat: 46.2, startLng: 6.1,   endLat: 40.7,  endLng: -74.0,  label: 'Geneva → New York' },
+]
+
+const CITIES = [
+  { lat: 25.2,  lng: 55.3,   name: 'Dubai' },
+  { lat: 51.5,  lng: -0.1,   name: 'London' },
+  { lat: 40.7,  lng: -74.0,  name: 'New York' },
+  { lat: 1.3,   lng: 103.8,  name: 'Singapore' },
+  { lat: 35.7,  lng: 139.7,  name: 'Tokyo' },
+  { lat: 48.9,  lng: 2.3,    name: 'Paris' },
+  { lat: 46.2,  lng: 6.1,    name: 'Geneva' },
+  { lat: 34.0,  lng: -118.2, name: 'Los Angeles' },
+  { lat: -33.9, lng: 151.2,  name: 'Sydney' },
+]
+
+export default function GlobeSection() {
+  const sectionRef = useRef(null)
+  const wrapRef    = useRef(null)
+  const headRef    = useRef(null)
+  const [mounted, setMounted] = useState(false)
+  const [size, setSize] = useState(600)
+
+  // Only mount the globe once the section is near viewport (perf)
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setMounted(true); obs.disconnect() } },
+      { rootMargin: '200px' }
+    )
+    if (sectionRef.current) obs.observe(sectionRef.current)
+    return () => obs.disconnect()
+  }, [])
+
+  // Responsive globe size
+  useEffect(() => {
+    const calc = () => {
+      const w = wrapRef.current?.offsetWidth ?? 600
+      setSize(Math.min(w, 720))
+    }
+    calc()
+    const ro = new ResizeObserver(calc)
+    if (wrapRef.current) ro.observe(wrapRef.current)
+    return () => ro.disconnect()
+  }, [])
+
+  // Scroll animations
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const ctx = gsap.context(() => {
+      // Headline line reveals
+      const lineInners = headRef.current?.querySelectorAll(`.${styles.lineInner}`)
+      if (lineInners?.length) {
+        gsap.fromTo(lineInners,
+          { yPercent: 110 },
+          { yPercent: 0, duration: 0.85, ease: 'power3.out', stagger: 0.12,
+            scrollTrigger: { trigger: headRef.current, start: 'top 82%', once: true } }
+        )
+      }
+
+      // Globe wrap fade + scale
+      gsap.fromTo(wrapRef.current,
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out',
+          scrollTrigger: { trigger: wrapRef.current, start: 'top 80%', once: true } }
+      )
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <section ref={sectionRef} className={styles.globe}>
+      <div className={styles.inner}>
+
+        <div ref={headRef} className={styles.head}>
+          <p className={styles.eyebrow}>GLOBAL NETWORK</p>
+          <h2 className={styles.headline}>
+            <span className={styles.lineWrap}>
+              <span className={styles.lineInner}>Your world</span>
+            </span>
+            <span className={styles.lineWrap}>
+              <span className={styles.lineInner}>without limits.</span>
+            </span>
+          </h2>
+          <p className={styles.sub}>
+            150+ destinations. Every continent. On demand.
+          </p>
+        </div>
+
+        <div ref={wrapRef} className={styles.globeWrap} style={{ opacity: 0 }}>
+          <Suspense fallback={<div className={styles.globePlaceholder} />}>
+            {mounted && (
+              <Globe
+                width={size}
+                height={size}
+                backgroundColor="rgba(0,0,0,0)"
+                globeImageUrl={null}
+                atmosphereColor="var(--sky-deep)"
+                atmosphereAltitude={0.14}
+
+                /* Land polygons */
+                polygonsData={COUNTRIES}
+                polygonCapColor={() => '#1c2230'}
+                polygonSideColor={() => '#1c2230'}
+                polygonStrokeColor={() => 'rgba(255,255,255,0.08)'}
+                polygonAltitude={0.006}
+
+                /* Flight arcs */
+                arcsData={ARCS}
+                arcStartLat="startLat"
+                arcStartLng="startLng"
+                arcEndLat="endLat"
+                arcEndLng="endLng"
+                arcColor={() => ['rgba(255,255,255,0.7)', 'rgba(244,177,92,0.9)']}
+                arcAltitude={0.3}
+                arcStroke={0.6}
+                arcDashLength={0.4}
+                arcDashGap={0.2}
+                arcDashAnimateTime={2800}
+
+                /* City markers */
+                pointsData={CITIES}
+                pointLat="lat"
+                pointLng="lng"
+                pointColor={() => '#ffffff'}
+                pointAltitude={0.01}
+                pointRadius={0.35}
+                pointsMerge={false}
+
+                /* Interaction */
+                enablePointerInteraction
+              />
+            )}
+          </Suspense>
+        </div>
+
+      </div>
+
+      {/* ink→paper transition for Showcase */}
+      <div className={styles.bottomFade} />
+    </section>
+  )
+}

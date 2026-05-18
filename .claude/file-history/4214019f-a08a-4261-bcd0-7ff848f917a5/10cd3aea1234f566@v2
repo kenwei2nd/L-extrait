@@ -1,0 +1,293 @@
+// ============================================
+// Video-to-Website: Scroll-Driven Animation
+// ============================================
+
+// ========== 1. LENIS SMOOTH SCROLL ==========
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true
+});
+
+lenis.on("scroll", ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+// ========== 2. FRAME PRELOADER ==========
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const loader = document.getElementById("loader");
+const loaderPercent = document.getElementById("loader-percent");
+const loaderProgress = document.querySelector(".loader-progress");
+
+let frames = [];
+let currentFrame = 0;
+let FRAME_COUNT = 0;
+const FRAME_SPEED = 2.0;
+const IMAGE_SCALE = 0.85;
+
+// Get frame count from directory
+async function initFrames() {
+  try {
+    const response = await fetch("frames/");
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const links = Array.from(doc.querySelectorAll("a"))
+      .map(a => a.href)
+      .filter(href => href.includes("frame_"));
+
+    FRAME_COUNT = links.length;
+    await loadFramesPhased(links);
+  } catch (error) {
+    console.error("Error loading frames:", error);
+  }
+}
+
+async function loadFramesPhased(frameUrls) {
+  // Phase 1: Load first 10 frames immediately
+  const firstBatch = frameUrls.slice(0, Math.min(10, frameUrls.length));
+  for (const url of firstBatch) {
+    await loadFrameImage(url);
+  }
+
+  // Phase 2: Load remaining frames in background
+  const remainingBatch = frameUrls.slice(10);
+  for (let i = 0; i < remainingBatch.length; i++) {
+    await loadFrameImage(remainingBatch[i]);
+    updateLoaderProgress((10 + i + 1) / frameUrls.length);
+  }
+
+  hideLoader();
+}
+
+async function loadFrameImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      frames.push(img);
+      resolve();
+    };
+    img.onerror = resolve;
+    img.src = src;
+  });
+}
+
+function updateLoaderProgress(percent) {
+  const p = Math.floor(percent * 100);
+  loaderPercent.textContent = p + "%";
+  loaderProgress.style.width = p + "%";
+}
+
+function hideLoader() {
+  loader.classList.add("hidden");
+}
+
+// ========== 3. CANVAS SETUP ==========
+function setupCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.scale(dpr, dpr);
+}
+
+function sampleBgColor(img) {
+  if (!img) return "#111111";
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
+  tempCanvas.width = 1;
+  tempCanvas.height = 1;
+  tempCtx.drawImage(img, 0, 0, 1, 1);
+  const data = tempCtx.getImageData(0, 0, 1, 1).data;
+  return `rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+}
+
+function drawFrame(index) {
+  if (index < 0 || index >= frames.length) return;
+
+  const img = frames[index];
+  const cw = canvas.width / (window.devicePixelRatio || 1);
+  const ch = canvas.height / (window.devicePixelRatio || 1);
+  const iw = img.naturalWidth;
+  const ih = img.naturalHeight;
+
+  const scale = Math.max(cw / iw, ch / ih) * IMAGE_SCALE;
+  const dw = iw * scale;
+  const dh = ih * scale;
+  const dx = (cw - dw) / 2;
+  const dy = (ch - dh) / 2;
+
+  const bgColor = sampleBgColor(img);
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+
+// ========== 4. FRAME-TO-SCROLL BINDING ==========
+const scrollContainer = document.getElementById("scroll-container");
+
+ScrollTrigger.create({
+  trigger: scrollContainer,
+  start: "top top",
+  end: "bottom bottom",
+  scrub: true,
+  onUpdate: (self) => {
+    const accelerated = Math.min(self.progress * FRAME_SPEED, 1);
+    const index = Math.min(Math.floor(accelerated * FRAME_COUNT), FRAME_COUNT - 1);
+    if (index !== currentFrame) {
+      currentFrame = index;
+      requestAnimationFrame(() => drawFrame(currentFrame));
+    }
+  }
+});
+
+// ========== 5. SECTION ANIMATION SYSTEM ==========
+function setupSectionAnimation(section) {
+  const type = section.dataset.animation;
+  const persist = section.dataset.persist === "true";
+  const enter = parseFloat(section.dataset.enter) / 100;
+  const leave = parseFloat(section.dataset.leave) / 100;
+
+  const children = section.querySelectorAll(
+    ".section-label, .section-heading, .section-body, .section-link, .cta-button, .stat, .stat-number"
+  );
+
+  const tl = gsap.timeline({ paused: true });
+
+  switch (type) {
+    case "fade-up":
+      tl.from(children, { y: 50, opacity: 0, stagger: 0.12, duration: 0.9, ease: "power3.out" });
+      break;
+    case "slide-left":
+      tl.from(children, { x: -80, opacity: 0, stagger: 0.14, duration: 0.9, ease: "power3.out" });
+      break;
+    case "slide-right":
+      tl.from(children, { x: 80, opacity: 0, stagger: 0.14, duration: 0.9, ease: "power3.out" });
+      break;
+    case "scale-up":
+      tl.from(children, { scale: 0.85, opacity: 0, stagger: 0.12, duration: 1.0, ease: "power2.out" });
+      break;
+    case "rotate-in":
+      tl.from(children, { y: 40, rotation: 3, opacity: 0, stagger: 0.1, duration: 0.9, ease: "power3.out" });
+      break;
+    case "stagger-up":
+      tl.from(children, { y: 60, opacity: 0, stagger: 0.15, duration: 0.8, ease: "power3.out" });
+      break;
+    case "clip-reveal":
+      tl.from(children, { clipPath: "inset(100% 0 0 0)", opacity: 0, stagger: 0.15, duration: 1.2, ease: "power4.inOut" });
+      break;
+  }
+
+  ScrollTrigger.create({
+    trigger: section,
+    start: "top 50%",
+    end: "bottom 50%",
+    onUpdate: (self) => {
+      const progress = self.progress;
+      if (progress <= 0) {
+        tl.progress(0);
+      } else if (progress >= 1) {
+        tl.progress(1);
+        if (persist) tl.play();
+      } else {
+        tl.progress(progress);
+      }
+    }
+  });
+}
+
+// ========== 6. COUNTER ANIMATIONS ==========
+document.querySelectorAll(".stat-number").forEach(el => {
+  const target = parseFloat(el.dataset.value);
+  const decimals = parseInt(el.dataset.decimals || "0");
+
+  gsap.from(el, {
+    textContent: 0,
+    duration: 2,
+    ease: "power1.out",
+    snap: { textContent: decimals === 0 ? 1 : 0.01 },
+    scrollTrigger: {
+      trigger: el.closest(".scroll-section"),
+      start: "top 70%",
+      toggleActions: "play none none reverse"
+    }
+  });
+});
+
+// ========== 7. HORIZONTAL MARQUEE ==========
+document.querySelectorAll(".marquee-wrap").forEach(el => {
+  const speed = parseFloat(el.dataset.scrollSpeed) || -25;
+  gsap.to(el.querySelector(".marquee-text"), {
+    xPercent: speed,
+    ease: "none",
+    scrollTrigger: {
+      trigger: scrollContainer,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true
+    }
+  });
+});
+
+// ========== 8. DARK OVERLAY ==========
+function initDarkOverlay() {
+  const overlay = document.getElementById("dark-overlay");
+  const enter = 0.54;
+  const leave = 0.72;
+  const fadeRange = 0.04;
+
+  ScrollTrigger.create({
+    trigger: scrollContainer,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true,
+    onUpdate: (self) => {
+      const p = self.progress;
+      let opacity = 0;
+
+      if (p >= enter - fadeRange && p <= enter) {
+        opacity = (p - (enter - fadeRange)) / fadeRange;
+      } else if (p > enter && p < leave) {
+        opacity = 0.9;
+      } else if (p >= leave && p <= leave + fadeRange) {
+        opacity = 0.9 * (1 - (p - leave) / fadeRange);
+      }
+
+      overlay.style.opacity = opacity;
+    }
+  });
+}
+
+// ========== 9. CIRCLE-WIPE HERO REVEAL ==========
+function initHeroTransition() {
+  const heroSection = document.querySelector(".hero-standalone");
+  const canvasWrap = document.querySelector(".canvas-wrap");
+
+  ScrollTrigger.create({
+    trigger: scrollContainer,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true,
+    onUpdate: (self) => {
+      const p = self.progress;
+      heroSection.style.opacity = Math.max(0, 1 - p * 15);
+      const wipeProgress = Math.min(1, Math.max(0, (p - 0.01) / 0.06));
+      const radius = wipeProgress * 75;
+      canvasWrap.style.clipPath = `circle(${radius}% at 50% 50%)`;
+    }
+  });
+}
+
+// ========== INITIALIZATION ==========
+async function init() {
+  setupCanvas();
+  await initFrames();
+
+  document.querySelectorAll(".scroll-section").forEach(setupSectionAnimation);
+  initDarkOverlay();
+  initHeroTransition();
+
+  window.addEventListener("resize", setupCanvas);
+}
+
+init();

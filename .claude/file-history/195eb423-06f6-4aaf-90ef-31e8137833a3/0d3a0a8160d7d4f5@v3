@@ -1,0 +1,214 @@
+# Context
+
+The About section is too plain — basic fade/slide animations, flat white background, no visual drama. The user wants:
+1. **Dark ink background** for the About section with much richer animations
+2. **Interactive globe section** after About, showing flight arcs between global destinations (like the ezgif reference)
+3. A seamless paper→ink transition from the hero exit into the About section
+
+---
+
+# Part 1 — About Section Redesign
+
+## Background transition
+
+Hero gradient currently fades to `var(--paper)`. The About section needs to go dark without a hard cut.
+
+**Solution:** Set `AboutSection`'s background to a top-fade: first 10vh graduates from `var(--paper)` to `var(--ink)`, then solid ink for the rest. No hero changes needed.
+
+```css
+.about {
+  background: linear-gradient(to bottom, var(--paper) 0%, var(--ink) 10%) var(--ink);
+  /* pin a solid ink color as the fallback — only the gradient covers the top strip */
+}
+```
+
+Actually cleaner: use a `::before` pseudo-element for the transition strip, then `background: var(--ink)` on the section itself. This avoids gradient math on the section background.
+
+## Layout
+
+```
+[TOP STRIP — paper→ink gradient, ~12vh, no content]
+
+  ABOUT AETHER                          ← eyebrow, white/muted
+
+  We don't move          ← line 1 clip-path reveal
+  people. We move        ← line 2 clip-path reveal
+  time.                  ← line 3 clip-path reveal (italic)
+
+  Body copy              ← word-level opacity stagger
+
+  ┌──────┬──────┬───────────┐
+  │5,000+│ 150+ │    24 H   │  ← animated counter row
+  │MISS. │CTRIES│AVAILABILITY│
+  └──────┴──────┴───────────┘
+
+  ── QUIET ALTITUDE · ZERO COMPROMISE · PRIVATE AVIATION · GLOBAL REACH · ──→
+                             (CSS marquee ticker, continuous)
+
+  ┌──────────────┐ ┌──────────────┐   ← card 1 enters from left
+  │ 01           │ │ 02           │   ← card 2 enters from right
+  │ Direct       │ │ Your Freedom │
+  │ Access…      │ │ to Enjoy…    │
+  └──────────────┘ └──────────────┘
+  ┌──────────────┐ ┌──────────────┐
+  │ 03           │ │ 04           │
+  │ Precision…   │ │ Global Reach │
+  └──────────────┘ └──────────────┘
+```
+
+## Animation details
+
+### 1. Headline — clip-path line reveal (each line)
+Wrap every line in `<span class={lineWrap}>` (overflow hidden) containing `<span class={lineInner}>`. GSAP animates `y: '110%'→0` per inner span with stagger 0.12s.
+
+```js
+gsap.fromTo(lineInners, { yPercent: 110 }, {
+  yPercent: 0, duration: 0.85, ease: 'power3.out', stagger: 0.12,
+  scrollTrigger: { trigger: headline, start: 'top 82%', once: true }
+})
+```
+
+### 2. Stats counters
+Three counters use `gsap.to(obj, { val: TARGET, onUpdate })` with tabular number display. Trigger when the stat row enters viewport.
+
+| Label | Target | Suffix |
+|---|---|---|
+| MISSIONS COMPLETED | 5000 | + |
+| COUNTRIES SERVED | 150 | + |
+| AVAILABILITY | 24 | H |
+
+### 3. Marquee ticker
+Pure CSS `@keyframes marquee` — duplicate the string twice for a seamless loop. `animation-duration: 28s, linear, infinite`. No JS needed.
+
+### 4. Cards — alternating direction + hover
+- Cards 1 & 3: enter `x: -48 → 0`
+- Cards 2 & 4: enter `x: 48 → 0`
+- Each card gets a numbered index (01–04) in small caps
+- CSS hover: `translateY(-6px)`, border goes from `rgba(255,255,255,0.08)` → `rgba(255,255,255,0.22)`, subtle `box-shadow` glow
+
+### 5. Body copy — word stagger
+Split the paragraph into `<span>` words, stagger `opacity 0→1` with 0.015s per word via GSAP. Reads as a wave of text materializing.
+
+## Files changed (Part 1)
+
+| File | Change |
+|---|---|
+| `src/components/sections/About/AboutSection.jsx` | Full rewrite — clip-path reveals, counter refs, word spans, marquee, card indices |
+| `src/components/sections/About/AboutSection.module.css` | Full rewrite — dark palette, lineWrap/lineInner, marquee keyframe, card border hover |
+
+---
+
+# Part 2 — Globe Section (new, after About)
+
+## Library
+
+Install **`react-globe.gl`** (`npm install react-globe.gl`). This is a React wrapper for globe.gl — WebGL-based, supports arc paths between lat/lng coords, marker points, draggable/zoomable interaction, and custom color callbacks.
+
+## Data — flight arcs
+
+10 arcs between luxury destinations:
+
+| Route | From → To |
+|---|---|
+| Dubai → London | 25.2,55.3 → 51.5,-0.1 |
+| Dubai → New York | 25.2,55.3 → 40.7,-74.0 |
+| Dubai → Singapore | 25.2,55.3 → 1.3,103.8 |
+| London → New York | 51.5,-0.1 → 40.7,-74.0 |
+| London → Tokyo | 51.5,-0.1 → 35.7,139.7 |
+| New York → Los Angeles | 40.7,-74.0 → 34.0,-118.2 |
+| Paris → Dubai | 48.9,2.3 → 25.2,55.3 |
+| Tokyo → Sydney | 35.7,139.7 → -33.9,151.2 |
+| Singapore → Sydney | 1.3,103.8 → -33.9,151.2 |
+| Geneva → New York | 46.2,6.1 → 40.7,-74.0 |
+
+City markers (9 cities): Dubai, London, New York, Singapore, Tokyo, Paris, Geneva, Los Angeles, Sydney.
+
+## Globe styling (dark Aether palette)
+
+```js
+globeProps = {
+  backgroundColor: 'rgba(0,0,0,0)',      // transparent — section bg shows through
+  globeImageUrl: null,                    // no texture — use custom material
+  atmosphereColor: '#6aa6ff',             // --sky-deep
+  atmosphereAltitude: 0.12,
+  // Land polygons from TopoJSON with fill --ink-soft
+  // Arc stroke: white → amber (#f4b15c) gradient
+  // Arc altitude: 0.25–0.4 (arcs bow outward)
+  // Arc dash animated (animateIn)
+  // City markers: small white dots + ring pulse animation
+}
+```
+
+To render land masses without a texture: use `polygonsData` from `world-atlas/countries-110m.json` (tiny, ~120kb).
+
+## Section layout
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  (dark ink background — continuous from About)            │
+│                                                          │
+│  YOUR WORLD                    ← left, large headline    │
+│  WITHOUT LIMITS.                                         │
+│                                                          │
+│  150+ destinations.            ← subline                 │
+│  Every continent. On demand.                             │
+│                                                          │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                    │  │
+│  │              [INTERACTIVE GLOBE]                   │  │
+│  │         drag to rotate · hover arcs                │  │
+│  │                                                    │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  (bottom gradient ink→paper for Showcase transition)      │
+└──────────────────────────────────────────────────────────┘
+```
+
+The bottom of the globe section fades `var(--ink)` → `var(--paper)` to transition into the Showcase.
+
+## Scroll animation
+
+Globe section is NOT pinned. On scroll-into-view:
+- Globe canvas fades in + scales from 0.92→1.0 (GSAP, 0.9s ease-out)
+- Headline clips up (same pattern as About)
+- Arc paths animate in with `arcDashAnimateTime` staggered per arc
+
+## Files created (Part 2)
+
+| File | Note |
+|---|---|
+| `src/components/sections/Globe/GlobeSection.jsx` | new |
+| `src/components/sections/Globe/GlobeSection.module.css` | new |
+
+## App.jsx order
+
+```jsx
+<HeroSection />
+<AboutSection />     ← dark ink
+<GlobeSection />     ← dark ink, bottom fades to paper
+<ShowcaseSection />  ← paper
+```
+
+---
+
+# Dependencies to install
+
+```
+npm install react-globe.gl world-atlas
+```
+
+(`world-atlas` provides the country polygon TopoJSON for land rendering without a raster texture.)
+
+---
+
+# Verification
+
+1. `npm install react-globe.gl world-atlas`
+2. `npm run dev`
+3. Scroll past hero pin → paper strip briefly visible → smooth gradient into dark About
+4. Headline lines clip up one by one
+5. Stats counters animate when the row enters viewport
+6. Marquee runs continuously
+7. Cards enter from alternating sides; hover lifts + border brightens
+8. Globe section: globe fades in, arcs animate, drag rotates globe
+9. Bottom of Globe section transitions smoothly to white Showcase

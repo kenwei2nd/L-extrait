@@ -1,0 +1,145 @@
+/* Inner Page Styles */
+
+.inner-page section {
+  position: relative;
+  padding-top: var(--h1);
+  padding-bottom: var(--h2);
+}
+
+/* Hero section */
+.inner-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: flex-end;
+  background-color: var(--c-black);
+  padding-top: calc(var(--h0) * 2) !important;
+}
+
+.inner-hero .-w {
+  --left: 2;
+  --width: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--h3);
+}
+
+.inner-hero h1 {
+  color: var(--c-yellow);
+}
+
+.inner-hero p {
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+}
+
+/* Grid sections */
+.inner-grid {
+  background-color: var(--c-black);
+  padding-top: var(--h0) !important;
+  padding-bottom: var(--h0) !important;
+}
+
+.inner-grid .-w {
+  --left: 2;
+  --width: 10;
+}
+
+/* Places grid */
+.places-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--h3);
+}
+
+.place-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m);
+  border-radius: var(--g-gap);
+  overflow: hidden;
+  background-color: var(--c-stone);
+}
+
+.place-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.place-card h3 {
+  padding: var(--m) var(--p) var(--p);
+  color: var(--c-yellow);
+}
+
+/* Objects grid */
+.objects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--h2);
+}
+
+.object-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m);
+  border-radius: var(--g-gap);
+  overflow: hidden;
+  background-color: var(--c-stone);
+}
+
+.object-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.object-card h3 {
+  padding: var(--m) var(--p) var(--p);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Text sections */
+.inner-text {
+  background-color: var(--c-black);
+}
+
+.inner-text .-w {
+  --left: 3;
+  --width: 7;
+}
+
+.text-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--h3);
+}
+
+.text-block p + p {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile */
+@media (max-width: 1023px) {
+  .inner-hero .-w,
+  .inner-grid .-w,
+  .inner-text .-w {
+    --left: 1;
+    --width: 12;
+  }
+
+  .places-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .objects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .places-grid {
+    grid-template-columns: 1fr;
+  }
+}

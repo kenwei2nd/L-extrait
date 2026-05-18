@@ -1,0 +1,330 @@
+.architecture {
+  position: relative;
+  width: 100%;
+  padding: 15vh 5vw 14vh;
+  background: #000000;
+  color: #efe4cf;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Matte film grain — inline SVG fractal-noise rendered at very low opacity
+   with mix-blend-mode: screen, so it adds a fine physical texture without
+   washing out the black. Sits above the glow, below the seam mask + content. */
+.architecture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+  background-repeat: repeat;
+  opacity: 0.04;
+  mix-blend-mode: screen;
+}
+
+/* Ambient glow — image bg, massively blurred + heavily darkened, ghost-faint.
+   Sits at the very bottom of the stacking context. */
+.architecture__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/architecture-glow.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  /* Atmospheric blurred backdrop — heavy blur so the image reads as
+     soft warm light/shapes rather than a literal picture */
+  filter: blur(3px) brightness(0.55) saturate(1.15);
+  opacity: 0.85;
+  pointer-events: none;
+  /* push the blur source slightly out so the blurred edges don't
+     reveal a hard rectangle inside the section */
+  transform: scale(1.15);
+  transform-origin: center;
+}
+
+/* Top gradient mask — black fading down to transparent over 15vh.
+   Painted above the glow so the upper boundary melts into the void. */
+.architecture__seam-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.architecture__svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Header ---------- */
+.architecture__header {
+  position: relative;
+  z-index: 3;
+  max-width: 760px;
+  margin: 0 0 6vh;
+  text-align: left;
+}
+
+.architecture__title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(40px, 5.6vw, 96px);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  color: #efe4cf;
+}
+
+.architecture__subtitle {
+  margin: 18px 0 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(239, 228, 207, 0.6);
+}
+
+/* ---------- Grid ---------- */
+.architecture__grid {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2vw;
+}
+
+/* ---------- Card ---------- */
+.card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 4px;
+  /* hairline catches the ambient backlight on the card edges */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  background: #1a1108;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+/* Glass variant — semi-transparent so the blurred section bg shows through.
+   Used with transparent-PNG raw images. */
+.card--glass {
+  background: rgba(20, 14, 6, 0.18);
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* On the glass card, lighten the bottom darkening so the see-through
+   look survives all the way down to the text band */
+.card--glass .card__overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.2) 38%,
+    rgba(0, 0, 0, 0) 70%
+  );
+}
+
+.card__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition:
+    opacity 0.6s ease-in-out,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease-in-out;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+/* Default state: raw material visible, fluid hidden */
+.card__img--raw {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card__img--fluid {
+  opacity: 0;
+  transform: scale(1.04);
+  /* The ripple filter is applied permanently to the fluid layer but,
+     because the layer is invisible by default, the displacement only
+     visually exists during the crossfade — exactly the "liquid emerging"
+     feel the brief asks for. */
+  filter: url(#liquidRipple);
+}
+
+/* Hover state */
+.card:hover .card__img--raw {
+  opacity: 0;
+  transform: scale(1.05);
+  filter: blur(2px);
+}
+
+.card:hover .card__img--fluid {
+  opacity: 1;
+  transform: scale(1);
+  filter: url(#liquidRipple) saturate(1.05);
+}
+
+/* Bottom-anchored darkening for text legibility */
+.card__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.35) 38%,
+      rgba(0, 0, 0, 0) 70%
+    );
+  transition: opacity 0.6s ease;
+  opacity: 1;
+}
+
+.card:hover .card__overlay {
+  opacity: 0.85;
+}
+
+/* Frosted-glass band behind the card text — backdrop blur with a
+   gradient mask so it fades to transparent toward the top of the card.
+   Keeps the image readable at the top, makes the text crisp at the bottom. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  backdrop-filter: blur(10px) saturate(0.95);
+  -webkit-backdrop-filter: blur(10px) saturate(0.95);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    #000 0%,
+    #000 30%,
+    transparent 70%
+  );
+  mask-image: linear-gradient(
+    to top,
+    #000 0%,
+    #000 30%,
+    transparent 70%
+  );
+  transition: backdrop-filter 0.6s ease;
+}
+
+/* ---------- Card text ---------- */
+.card__text {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.card:hover .card__text {
+  transform: translateY(-10px);
+}
+
+.card__index {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(201, 147, 58, 0.85);
+  margin-bottom: 4px;
+}
+
+.card__name {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #efe4cf;
+}
+
+.card__desc {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: rgba(239, 228, 207, 0.7);
+  max-width: 28ch;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .architecture {
+    padding: 10vh 6vw 12vh;
+  }
+  .architecture__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .architecture {
+    padding: 9vh 6vw 10vh;
+  }
+  .architecture__grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .card {
+    aspect-ratio: 4 / 5;
+  }
+  .card__name {
+    font-size: 22px;
+  }
+}
+
+/* On touch devices, treat tap-and-hold or first tap as hover */
+@media (hover: none) {
+  .card:focus-within .card__img--raw {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  .card:focus-within .card__img--fluid {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .card:focus-within .card__text {
+    transform: translateY(-10px);
+  }
+}

@@ -1,0 +1,144 @@
+/**
+ * Section-specific animations
+ * - Welcome: SVG arch path GSAP ScrollTrigger scrub
+ * - Connection: parallax text scroll
+ * - Footer: stone sphere parallax
+ */
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ===== WELCOME SECTION =====
+// Arch path animates from flat bottom to full arch as user scrolls down
+
+(function initWelcomeArch() {
+  const welcomeSection = document.querySelector('.welcome-section');
+  const archPath = document.getElementById('arch-path');
+  if (!welcomeSection || !archPath) return;
+
+  // Start: flat line at bottom. End: deep arch opening upward.
+  // d attribute values are driven by lerped progress via GSAP
+  ScrollTrigger.create({
+    trigger: welcomeSection,
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 1,
+    onUpdate: (self) => {
+      const p = self.progress;
+      // Arch control point Y: from 0.75 (flat) to -0.2 (deep arch)
+      const ctrlY = 0.75 - p * 0.95;
+      archPath.setAttribute(
+        'd',
+        `M 0 1 L 0 0.75 Q 0.5 ${ctrlY.toFixed(4)} 1 0.75 L 1 1 Z`
+      );
+    },
+  });
+
+  // Spotlight effect on stone image — CSS var driven by mouse
+  const stoneEl = document.querySelector('.welcome-section .stone');
+  if (stoneEl) {
+    document.addEventListener('mousemove', (e) => {
+      const rect = stoneEl.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      const dist = Math.min(Math.sqrt(dx * dx + dy * dy) / 300, 1);
+      stoneEl.style.setProperty('--spotlight-angle', `${angle}deg`);
+      stoneEl.style.setProperty('--spotlight-distance', dist.toFixed(3));
+    });
+  }
+})();
+
+// ===== CONNECTION SECTION =====
+
+(function initConnectionParallax() {
+  const connectionSection = document.querySelector('.connection-section');
+  if (!connectionSection) return;
+
+  const heading = connectionSection.querySelector('h2');
+  const para = connectionSection.querySelector('p');
+  const figure = connectionSection.querySelector('.connection-figure');
+
+  ScrollTrigger.create({
+    trigger: connectionSection,
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: 1.5,
+    onUpdate: (self) => {
+      const p = self.progress;
+      connectionSection.style.setProperty('--connection-progress', p.toFixed(4));
+    },
+  });
+
+  // Parallax layers: heading moves faster, figure moves slower
+  if (heading) {
+    gsap.fromTo(
+      heading,
+      { y: 60 },
+      {
+        y: -60,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: connectionSection,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.5,
+        },
+      }
+    );
+  }
+
+  if (figure) {
+    gsap.fromTo(
+      figure,
+      { y: 30, rotate: 0 },
+      {
+        y: -30,
+        rotate: 45,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: connectionSection,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 2,
+        },
+      }
+    );
+  }
+
+  if (para) {
+    gsap.fromTo(
+      para,
+      { y: 40, opacity: 0.4 },
+      {
+        y: -20,
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: connectionSection,
+          start: 'top 80%',
+          end: 'center center',
+          scrub: 1,
+        },
+      }
+    );
+  }
+})();
+
+// ===== FOOTER STONE PARALLAX =====
+
+(function initFooterParallax() {
+  const footer = document.getElementById('main-footer');
+  if (!footer) return;
+
+  ScrollTrigger.create({
+    trigger: footer,
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: 1,
+    onUpdate: (self) => {
+      footer.style.setProperty('--progress', self.progress.toFixed(4));
+    },
+  });
+})();

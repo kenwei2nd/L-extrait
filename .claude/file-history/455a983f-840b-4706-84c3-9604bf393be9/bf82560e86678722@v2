@@ -1,0 +1,75 @@
+/**
+ * Page Transition System
+ * Fires the transition overlay on internal <a> clicks before navigating.
+ * Overlay: 4 column spans animate in, then out, then window.location changes.
+ */
+
+const overlay = document.getElementById('page-transition');
+const mobileOverlay = document.getElementById('mobile-transition');
+const DURATION_OUT = 700;   // ms each column takes to fill (staggered)
+const DURATION_IN  = 1200;  // ms total before navigate
+
+let isTransitioning = false;
+
+function showTransition(href) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  // Capture scroll position for overlay positioning
+  const scrollY = window.scrollY;
+  overlay.style.setProperty('--top-position', scrollY);
+  mobileOverlay.style.setProperty('--top-position', scrollY);
+
+  overlay.style.display = 'block';
+  mobileOverlay.style.display = 'block';
+
+  // Force reflow, then trigger CSS animation via class
+  overlay.offsetHeight;
+  overlay.classList.add('-active');
+  mobileOverlay.classList.add('-active');
+
+  setTimeout(() => {
+    window.location.href = href;
+  }, DURATION_IN);
+}
+
+function initTransitions() {
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    // Only intercept internal navigation (not external, not anchors, not mailto)
+    if (
+      !href ||
+      href.startsWith('http') ||
+      href.startsWith('//') ||
+      href.startsWith('#') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      link.target === '_blank'
+    ) return;
+
+    e.preventDefault();
+    showTransition(href);
+  });
+}
+
+// Remove overlay on back/forward navigation
+window.addEventListener('pageshow', () => {
+  if (overlay) {
+    overlay.classList.remove('-active');
+    overlay.style.display = 'none';
+  }
+  if (mobileOverlay) {
+    mobileOverlay.classList.remove('-active');
+    mobileOverlay.style.display = 'none';
+  }
+  isTransitioning = false;
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTransitions);
+} else {
+  initTransitions();
+}

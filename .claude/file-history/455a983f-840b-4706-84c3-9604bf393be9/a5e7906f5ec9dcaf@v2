@@ -1,0 +1,139 @@
+/**
+ * Menu & Form Overlay System
+ * Handles open/close of full-screen menu and form overlays
+ * Manages .-isolate class on <html> for scroll locking
+ */
+
+const html = document.documentElement;
+const header = document.querySelector('header');
+const menuOverlay = document.getElementById('menu-overlay');
+const formOverlay = document.getElementById('form-overlay');
+const successModal = document.getElementById('success-modal');
+
+let menuOpen = false;
+let formOpen = false;
+let scrollPosition = 0;
+
+/**
+ * Toggle menu visibility
+ */
+function toggleMenu() {
+  menuOpen = !menuOpen;
+
+  if (menuOpen) {
+    scrollPosition = window.scrollY;
+    menuOverlay.style.display = 'block';
+    menuOverlay.style.setProperty('--top-position', scrollPosition);
+    header.classList.add('-hidden');
+    html.classList.add('-isolate');
+  } else {
+    menuOverlay.style.display = 'none';
+    header.classList.remove('-hidden');
+    html.classList.remove('-isolate');
+  }
+}
+
+/**
+ * Toggle form visibility
+ */
+function toggleForm() {
+  formOpen = !formOpen;
+
+  if (formOpen) {
+    scrollPosition = window.scrollY;
+    formOverlay.style.display = 'block';
+    formOverlay.style.setProperty('--top-position', scrollPosition);
+    header.classList.add('-hidden');
+    html.classList.add('-isolate');
+  } else {
+    formOverlay.style.display = 'none';
+    header.classList.remove('-hidden');
+    html.classList.remove('-isolate');
+  }
+}
+
+/**
+ * Close success modal
+ */
+function closeSuccessModal() {
+  successModal.style.display = 'none';
+  html.classList.remove('-isolate');
+}
+
+/**
+ * Show success modal (called after form submit)
+ */
+function showSuccessModal() {
+  successModal.style.display = 'block';
+  html.classList.add('-isolate');
+}
+
+/**
+ * Attach event listeners
+ */
+function initMenuSystem() {
+  // Toggle menu buttons
+  document.querySelectorAll('[data-action="toggle-menu"]').forEach(btn => {
+    btn.addEventListener('click', toggleMenu);
+  });
+
+  // Toggle form buttons
+  document.querySelectorAll('[data-action="toggle-form"]').forEach(btn => {
+    btn.addEventListener('click', toggleForm);
+  });
+
+  // Close modal buttons
+  document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
+    btn.addEventListener('click', closeSuccessModal);
+  });
+
+  // Menu overlay click outside to close
+  const menuOverlaySpan = menuOverlay.querySelector('.overlay');
+  if (menuOverlaySpan) {
+    menuOverlaySpan.addEventListener('click', toggleMenu);
+  }
+
+  // Form overlay click outside to close
+  const formOverlaySpan = formOverlay.querySelector('.overlay');
+  if (formOverlaySpan) {
+    formOverlaySpan.addEventListener('click', toggleForm);
+  }
+
+  // Form submission
+  const admissionFormHeader = document.getElementById('admission-form-header');
+  if (admissionFormHeader) {
+    admissionFormHeader.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Close form
+      toggleForm();
+
+      // Show success modal after animation
+      setTimeout(() => {
+        showSuccessModal();
+      }, 900);
+
+      // Reset form
+      admissionFormHeader.reset();
+    });
+  }
+
+  // Main admission form submission
+  const admissionForm = document.getElementById('admission-form');
+  if (admissionForm) {
+    admissionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showSuccessModal();
+      admissionForm.reset();
+    });
+  }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMenuSystem);
+} else {
+  initMenuSystem();
+}
+
+// toggleMenu, toggleForm, showSuccessModal, closeSuccessModal are globals available to other scripts

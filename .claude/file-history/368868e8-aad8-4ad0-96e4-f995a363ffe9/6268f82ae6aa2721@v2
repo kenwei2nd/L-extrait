@@ -1,0 +1,171 @@
+# Build Status — The Obsidian Assembly Clone
+
+**Last Updated:** 2026-05-14
+**Status:** Phase 1–7 Complete ✅
+
+---
+
+## ✅ Completed
+
+### Phase 1: Design System
+- [x] `css/tokens.css` — All CSS custom properties (colors, type scale, spacing, easing, grid)
+- [x] `css/base.css` — Reset, typography utilities, grid system (.-w), split text styles
+- [x] Google Fonts CDN integration (Cormorant Garamond, DM Serif Display, Inter)
+
+### Phase 2: Header + Navigation
+- [x] `css/header.css` — Fixed header with logo, nav buttons, hamburger menu
+- [x] Hamburger icon with gradient animation effect
+- [x] Header entrance animation on load
+- [x] `-scrolled`, `-dark`, `-hidden` state classes
+
+### Phase 3: Text Splitting
+- [x] `js/split.js` — Character splitting utility
+- [x] `[data-split]` attribute processing
+- [x] `.-s-char` span generation with stagger delays
+
+### Phase 4: Scroll System
+- [x] `js/scroll.js` — Lenis smooth scroll + GSAP ScrollTrigger
+- [x] Viewport unit calculation (`--vh`, `--vw`)
+- [x] `-loaded` and `-ready` class animation sequence
+- [x] RAF-based scroll event loop
+- [x] **Bug fix**: Removed invalid `export` statements from classic scripts (scroll.js, menu.js)
+
+### Phase 4b: Header & Menu
+- [x] `js/header.js` — Scroll threshold detection (50% vh → `-scrolled`)
+- [x] Header color system via `[data-header-color]` sections → `-dark` class
+- [x] `js/menu.js` — Menu/form overlay toggle
+- [x] `-isolate` class for scroll locking
+- [x] Form submission handlers
+
+### Phase 5a: Home Page Sections
+- [x] `css/home.css` — All section layouts and basic styles
+- [x] HTML structure for all 9 home sections (Welcome, Places, Objects, etc.)
+- [x] `js/places.js` — 7-slide carousel with rotation progress + autoplay
+- [x] `js/objects.js` — 4-card sequence with GSAP ScrollTrigger
+- [x] `js/updates.js` — 5-item hover carousel with state machine
+- [x] `js/admission.js` — Form validation and submission
+
+### Phase 5b: Home Page Sections (Remaining)
+- [x] Welcome section: SVG arch clipPath animation (GSAP ScrollTrigger scrub) — `js/sections.js`
+- [x] Welcome section: Mouse-driven spotlight CSS vars
+- [x] Connection section: GSAP parallax on heading, figure, paragraph
+- [x] Footer: Full content — nav grid, logo, credits row
+- [x] Footer: Stone underlay with CSS radial-gradient mask (replaces missing .webp)
+- [x] Footer: Stone sphere parallax (`--progress` CSS var)
+
+### Phase 6: Assets
+- [x] `images/stone-wall.webp` — Dark stone texture (picsum placeholder)
+- [x] `images/offices/1.jpg` through `7.jpg` — Dark architectural interiors (picsum placeholders)
+- [x] `images/guys/g-1.webp` — Person figure (picsum placeholder)
+- [x] `images/star-mask.svg` — Decorative scalloped edge mask
+- [x] `images/footer-path.svg` — Curved arch path
+- [x] `images/footer-mask.svg` — Radial gradient mask
+- [x] `images/r16.svg` — Rounded rect mask
+- [x] CSS mask-image references updated (mask-fade-*.webp replaced with CSS radial-gradient)
+
+### Phase 7: Inner Pages + Page Transitions
+- [x] `places.html` — Places inner page with full 7-card grid
+- [x] `objects.html` — Objects inner page with 4-card grid
+- [x] `about.html` — About inner page with text content
+- [x] `people.html` — People inner page
+- [x] `404.html` — 404 error page
+- [x] `css/inner.css` — Shared inner page stylesheet
+- [x] `js/transition.js` — Page transition overlay on link clicks
+- [x] Transition overlay CSS animation (column wipe + logo reveal)
+
+### Utilities
+- [x] `js/main.js` — Entry point / initialization orchestrator
+- [x] `js/webgl-stone.js` — WebGL placeholder class (stub — full shader deferred)
+- [x] `CLAUDE.md` — Developer guide with architecture notes
+
+---
+
+## ⚠️ Deferred / Nice-to-Have
+
+### WebGL Stone Effect (Phase 6 advanced)
+- [ ] Port full `DynamicReliefLampEffect` shader (ping-pong framebuffers, fluid sim)
+- [ ] Mouse-driven light position updates via `u_mouse` uniform
+- [ ] Scroll-based parallax (`u_scrollY` uniform)
+- [ ] IntersectionObserver pause/resume
+
+### Asset Replacement
+- [ ] Replace picsum.photos placeholder images with actual dark architectural photography
+- [ ] Real favicons (`fav/favicon.ico`, apple-touch-icons, mstile)
+
+### Polish
+- [ ] Admission section: 3-image sequence carousel
+- [ ] Split text hover rotation (desktop `::after` ghost layer with 60deg rotate-in)
+- [ ] Responsive refinements (mobile touch carousel gestures)
+
+---
+
+## 🚀 How to Run
+
+```bash
+npx serve .
+# or
+python -m http.server 8080
+# Open: http://localhost:3000 (or 8080)
+```
+
+**Working:**
+- Header scroll states (compact, dark, hidden)
+- Hamburger menu + form overlay open/close
+- Welcome arch SVG animates on scroll
+- Mouse spotlight on stone image
+- Places carousel (7 slides, 6s autoplay, prev/next)
+- Objects 4-card scroll sequence
+- Updates hover carousel
+- Connection section parallax
+- Footer with nav grid + stone underlay
+- Footer stone sphere parallax
+- Admission form validation + success modal
+- Page transition overlay (column wipe) on link clicks
+- All inner pages: places, objects, about, people, 404
+- Text split animations
+
+---
+
+## 📦 File Structure
+
+```
+c:\CLAUDE\obsidien\
+├── CLAUDE.md                   ✅ Developer guide
+├── BUILD_STATUS.md             ✅ This file
+├── index.html                  ✅ Home page
+├── places.html                 ✅ Places inner page
+├── objects.html                ✅ Objects inner page
+├── about.html                  ✅ About inner page
+├── people.html                 ✅ People inner page
+├── 404.html                    ✅ 404 error page
+├── css/
+│   ├── tokens.css              ✅ Design system
+│   ├── base.css                ✅ Reset + utilities + overlay styles
+│   ├── header.css              ✅ Header styles
+│   ├── home.css                ✅ Section layouts
+│   ├── footer.css              ✅ Footer styles
+│   └── inner.css               ✅ Inner page styles
+├── js/
+│   ├── split.js                ✅ Text splitting
+│   ├── scroll.js               ✅ Lenis + ScrollTrigger
+│   ├── header.js               ✅ Scroll state + color
+│   ├── menu.js                 ✅ Overlay handlers
+│   ├── places.js               ✅ Carousel
+│   ├── objects.js              ✅ Sequence
+│   ├── updates.js              ✅ Hover carousel
+│   ├── admission.js            ✅ Form handling
+│   ├── sections.js             ✅ Welcome arch + Connection parallax + Footer parallax
+│   ├── transition.js           ✅ Page transition overlay
+│   ├── webgl-stone.js          ⚠️ Stub (full shader deferred)
+│   └── main.js                 ✅ Entry point
+└── images/
+    ├── stone-wall.webp         ✅ Placeholder (picsum)
+    ├── star-mask.svg           ✅ Scalloped edge mask
+    ├── footer-path.svg         ✅ Curved arch
+    ├── footer-mask.svg         ✅ Radial mask
+    ├── r16.svg                 ✅ Rounded rect
+    ├── offices/
+    │   └── 1.jpg – 7.jpg      ✅ Placeholders (picsum)
+    └── guys/
+        └── g-1.webp            ✅ Placeholder (picsum)
+```

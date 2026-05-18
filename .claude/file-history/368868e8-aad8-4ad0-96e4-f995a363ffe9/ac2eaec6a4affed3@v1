@@ -1,0 +1,349 @@
+/* Home Page Section Styles */
+
+/* Sections base */
+main.page section {
+  position: relative;
+  padding-top: var(--h2);
+  padding-bottom: var(--h2);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Welcome Section */
+.welcome-section {
+  data-header-color: light;
+  background-color: var(--c-black);
+}
+
+.welcome-section .-w {
+  --width: 8;
+  --left: 3;
+}
+
+.welcome-section h1 {
+  margin-bottom: var(--h1);
+}
+
+.welcome-path {
+  width: 100%;
+  max-width: 600px;
+  margin: var(--h2) 0;
+  border: 1px solid var(--c-grey);
+  padding: var(--p);
+}
+
+.stone {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: var(--h2);
+  box-shadow: 0 0 60px rgba(var(--c-yellow-rgb), 0.1);
+}
+
+.stone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Places Section */
+.places-section {
+  data-header-color: light;
+  background-color: var(--c-black);
+  min-height: 200vh;
+}
+
+.places-section .relief-bg {
+  --width: 12;
+  --left: 1;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  margin: 0;
+}
+
+#relief-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.places-carousel {
+  --width: 8;
+  --left: 3;
+  margin-top: var(--h1);
+  position: relative;
+}
+
+.places-carousel h2 {
+  margin-bottom: var(--h2);
+}
+
+.carousel-items {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: var(--g-gap);
+  margin-bottom: var(--h2);
+}
+
+.carousel-item {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--f-fast);
+}
+
+.carousel-item.active {
+  opacity: 1;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  bottom: calc(100% + var(--p));
+  padding: var(--m) var(--p);
+  background-color: rgba(var(--c-yellow-rgb), 0.1);
+  color: var(--c-yellow);
+  border-radius: var(--g-gap);
+  font-size: var(--h4);
+  cursor: pointer;
+  transition: background-color 0.3s var(--f-cubic);
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+  background-color: rgba(var(--c-yellow-rgb), 0.2);
+}
+
+.carousel-prev {
+  right: var(--h3);
+}
+
+.carousel-next {
+  right: 0;
+}
+
+.carousel-progress {
+  width: 100%;
+  height: 2px;
+  background: conic-gradient(from 0deg, var(--c-yellow) 0%, var(--c-yellow) calc(var(--slide-progress)), transparent calc(var(--slide-progress)), transparent 360deg);
+  border-radius: 2px;
+}
+
+/* Places After Section */
+.places-after-section {
+  data-header-color: dark;
+  background-color: var(--c-stone);
+}
+
+.places-after-section .-w {
+  --width: 8;
+  --left: 3;
+  text-align: center;
+}
+
+/* Objects Section */
+.objects-section {
+  data-header-color: dark;
+  background-color: var(--c-black);
+  min-height: 300vh;
+}
+
+.objects-section .-w {
+  --width: 8;
+  --left: 3;
+}
+
+.objects-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--h2);
+  margin-top: var(--h2);
+  position: sticky;
+  top: var(--h1);
+  height: 100vh;
+  align-items: center;
+}
+
+.object {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--g-gap);
+  overflow: hidden;
+  opacity: 0.3;
+  transition: opacity 0.6s var(--f-cubic);
+}
+
+.object.active {
+  opacity: 1;
+}
+
+.object img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Connection Section */
+.connection-section {
+  data-header-color: light;
+  background-color: var(--c-black);
+}
+
+.connection-section .-w {
+  --width: 8;
+  --left: 3;
+}
+
+.connection-figure {
+  width: 200px;
+  margin-top: var(--h2);
+  color: var(--c-yellow);
+}
+
+/* Updates Section */
+.updates-section {
+  data-header-color: light;
+  background-color: var(--c-stone);
+}
+
+.updates-section .-w {
+  --width: 8;
+  --left: 3;
+}
+
+.updates-carousel {
+  margin-top: var(--h2);
+  min-height: 400px;
+}
+
+.update-item {
+  opacity: 0.3;
+  transition: opacity 0.3s var(--f-cubic);
+  margin-bottom: var(--h3);
+  padding: var(--h3);
+  border-radius: var(--g-gap);
+  background-color: rgba(var(--c-black-rgb), 0.3);
+}
+
+.update-item.active {
+  opacity: 1;
+}
+
+/* People Section */
+.people-section {
+  data-header-color: light;
+  background-color: var(--c-black);
+}
+
+.people-section .-w {
+  --width: 8;
+  --left: 3;
+}
+
+/* Admission Section */
+.admission-section {
+  data-header-color: dark;
+  background-color: var(--c-stone);
+}
+
+.admission-section .-w {
+  --width: 6;
+  --left: 4;
+}
+
+.admission-form {
+  margin-top: var(--h2);
+  display: grid;
+  gap: var(--h3);
+}
+
+.form-group {
+  display: grid;
+  gap: var(--m);
+}
+
+.form-group label {
+  display: block;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: var(--m);
+  border: 1px solid var(--c-grey);
+  border-radius: var(--g-gap);
+  color: var(--c-white);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--c-yellow);
+  outline: none;
+}
+
+.form-agreement label {
+  display: flex;
+  gap: var(--m);
+  align-items: flex-start;
+}
+
+.form-agreement input {
+  margin-top: 0.25em;
+  flex-shrink: 0;
+}
+
+/* Footer */
+footer {
+  background-color: var(--c-black);
+  padding-top: var(--large);
+  padding-bottom: var(--h2);
+  position: relative;
+  z-index: 40;
+}
+
+footer .-w {
+  --width: 8;
+  --left: 3;
+}
+
+/* Mobile adjustments */
+@media (max-width: 1023px) {
+  main.page section {
+    min-height: auto;
+    padding-top: var(--h3);
+    padding-bottom: var(--h3);
+  }
+
+  .objects-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-prev,
+  .carousel-next {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .admission-section .-w {
+    --width: 12;
+    --left: 1;
+  }
+}

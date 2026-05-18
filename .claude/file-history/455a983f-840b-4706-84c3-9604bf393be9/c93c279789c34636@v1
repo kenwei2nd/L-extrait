@@ -1,0 +1,338 @@
+/* Base Styles & Reset — The Obsidian Assembly Clone */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+html {
+  scroll-behavior: auto;
+  color: var(--c-white);
+  background-color: var(--c-black);
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--body-font-size);
+  line-height: var(--body-line-height);
+  background-color: var(--c-black);
+  color: var(--c-white);
+}
+
+/* Typography Reset */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-family: var(--font-t-1);
+  line-height: var(--body-line-height);
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+hr {
+  background-color: rgba(var(--c-white-rgb), 0.1);
+  border: none;
+  height: 1px;
+  margin: 0;
+}
+
+/* Form Reset */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+input,
+textarea {
+  background-color: transparent;
+  border: none;
+  border-radius: 0.2rem;
+  box-sizing: border-box;
+  padding: 0.4rem;
+  margin: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--c-purple);
+  opacity: 1;
+}
+
+input[disabled]::placeholder,
+textarea[disabled]::placeholder {
+  opacity: 0;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: relative;
+  touch-action: manipulation;
+}
+
+button span,
+button * {
+  display: block;
+  position: relative;
+}
+
+/* Images & Media */
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+img,
+svg,
+video {
+  display: block;
+  width: 100%;
+}
+
+a {
+  color: var(--c-white);
+  text-decoration: none;
+}
+
+/* ===== TYPOGRAPHY UTILITIES ===== */
+
+/* Heading sizes */
+.-h0 {
+  font-size: var(--h0);
+  line-height: var(--h0-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h1 {
+  font-size: var(--h1);
+  line-height: var(--h1-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h2 {
+  font-size: var(--h2);
+  line-height: var(--h2-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h3 {
+  font-size: var(--h3);
+  line-height: var(--h3-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h4 {
+  font-size: var(--h4);
+  line-height: var(--h4-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h5 {
+  font-size: var(--h5);
+  line-height: var(--h5-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h6 {
+  font-size: var(--h6);
+  line-height: var(--h6-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-hp {
+  font-size: var(--p);
+  line-height: var(--body-line-height);
+}
+
+.-hm {
+  font-size: var(--m);
+  line-height: var(--body-line-height);
+}
+
+.-mm {
+  font-family: var(--font-b-medium);
+  font-size: var(--mm);
+  line-height: var(--body-line-height);
+  font-weight: 600;
+}
+
+.-p {
+  font-size: var(--p);
+  line-height: var(--body-line-height);
+}
+
+.-m {
+  font-size: var(--m);
+  line-height: var(--body-line-height);
+}
+
+.-lrg {
+  font-size: var(--large);
+  line-height: var(--large-lh);
+  font-family: var(--font-t-2);
+  font-weight: 400;
+}
+
+.-lrg-max {
+  font-size: calc(var(--large) * var(--type-step));
+  line-height: var(--large-lh);
+  font-family: var(--font-t-2);
+  font-weight: 400;
+}
+
+/* Text alignment */
+.-tac { text-align: center; }
+.-taj { text-align: justify; text-align-last: justify; }
+
+/* Text transform */
+.-up { text-transform: uppercase; }
+.-noup { text-transform: none; }
+
+/* ===== GRID SYSTEM ===== */
+
+.-w {
+  display: grid;
+  grid-template-columns: repeat(var(--g-columns, 12), 1fr);
+  gap: var(--g-gap);
+  margin: 0 var(--g-margin);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.-w > * {
+  --left: 1;
+  --top: 1;
+  --width: 1;
+  --height: 1;
+  grid-column-start: var(--left, 1);
+  grid-column-end: calc(var(--left, 1) + var(--width, 1));
+  grid-row-start: var(--top, 1);
+  grid-row-end: calc(var(--top, 1) + var(--height, 1));
+}
+
+/* ===== DISPLAY UTILITIES ===== */
+
+.-dn { display: none; }
+
+/* ===== SPLIT TEXT ANIMATION ===== */
+
+.-s-char {
+  position: relative;
+  transform: translateZ(0);
+  transition: translate var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s);
+  translate: 0 0;
+}
+
+.-s-char:after {
+  color: rgba(var(--c-yellow-rgb), 0);
+  content: attr(data-split-content);
+  display: inline-block;
+  position: absolute;
+  inset: 0;
+  scale: 1.2;
+  translate: 0 100%;
+  transition: translate var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s),
+              color var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s),
+              scale var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s);
+  transform: translateZ(0);
+}
+
+/* ===== TRANSITIONS (CSS Classes) ===== */
+
+/* Page transition enter/leave */
+.-t-transition-enter-active,
+.-t-transition-leave-active {
+  pointer-events: none;
+}
+
+.-t-transition-enter-from,
+.-t-transition-leave-to {
+  opacity: 0;
+}
+
+/* Menu overlay enter/leave */
+.-t-menu-enter-active,
+.-t-menu-leave-active {
+  pointer-events: none;
+}
+
+.-t-menu-enter-from,
+.-t-menu-leave-to {
+  opacity: 0;
+}
+
+/* Form overlay enter/leave */
+.-t-form-enter-active,
+.-t-form-leave-active {
+  pointer-events: none;
+}
+
+.-t-form-enter-from,
+.-t-form-leave-to {
+  opacity: 0;
+}
+
+/* Success modal */
+.-t-submission-enter-active,
+.-t-submission-leave-active {
+  pointer-events: none;
+}
+
+.-t-submission-enter-from,
+.-t-submission-leave-to {
+  opacity: 0;
+}
+
+/* ===== STATE CLASSES ===== */
+
+html.not\:-ready {
+  /* Before initial load, hide most content */
+}
+
+html.html\:-loaded header {
+  animation: headerEnter 2.1s var(--f-cubic-in);
+}
+
+@keyframes headerEnter {
+  from {
+    transform: translate3d(0, -150%, 0) skew(-10deg, -5deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) skew(0, 0);
+  }
+}
+
+html.html\:-isolate {
+  overflow: hidden;
+}

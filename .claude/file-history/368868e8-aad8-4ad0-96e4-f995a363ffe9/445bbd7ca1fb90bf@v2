@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none">
+  <!-- Six-point star mask: top row pointing up, bottom row pointing down, scalloped edge -->
+  <defs>
+    <clipPath id="star-clip">
+      <rect width="200" height="100"/>
+    </clipPath>
+  </defs>
+  <!-- Row of upward-pointing scallop arcs forming a decorative star-edge -->
+  <path d="
+    M 0 100
+    L 0 60
+    Q 16.67 0 33.33 60
+    Q 50 100 66.67 60
+    Q 83.33 0 100 60
+    Q 116.67 100 133.33 60
+    Q 150 0 166.67 60
+    Q 183.33 100 200 60
+    L 200 100
+    Z
+  " fill="black"/>
+</svg>

@@ -1,0 +1,131 @@
+.concentration {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #050302;
+  isolation: isolate;
+}
+
+/* z-0 : heavy oil background, fades in via ScrollTrigger */
+.concentration__video {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center center;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Bottom seam fade — gradient mask that dissolves the video to black
+   over the bottom 18vh of the section, eliminating the hard edge into
+   Section 3. Sits above the gradient overlay but below the content. */
+.concentration__seam-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18vh;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.85) 70%,
+    #000 100%
+  );
+}
+
+/* Loop fade — black overlay that pulses to 1 in the last ~0.45s of the
+   video, hiding the seek-to-start; pulses back to 0 after the restart */
+.concentration__loop-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #050302;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s linear;
+}
+
+/* z-1 : dark gradient for legibility */
+.concentration__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 80% 70% at 50% 50%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.35) 70%,
+      rgba(0, 0, 0, 0.7) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.2) 30%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+}
+
+/* z-10 : centered editorial content */
+.concentration__content {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.concentration__headline {
+  margin: 0;
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(56px, 9vw, 148px);
+  line-height: 1.0;
+  letter-spacing: 0.005em;
+  color: #efe4cf;
+  text-shadow: 0 4px 60px rgba(0, 0, 0, 0.55);
+
+  /* Initial state — GSAP scrubs to neutral */
+  opacity: 0;
+  transform: translateY(80px);
+  filter: blur(20px);
+  will-change: transform, filter, opacity;
+}
+
+.concentration__body {
+  margin: 0;
+  max-width: 560px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: rgba(239, 228, 207, 0.82);
+
+  opacity: 0;
+  transform: translateY(60px);
+  filter: blur(15px);
+  will-change: transform, filter, opacity;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .concentration__headline {
+    font-size: clamp(40px, 11vw, 84px);
+  }
+  .concentration__body {
+    max-width: 92vw;
+    font-size: 14px;
+  }
+}

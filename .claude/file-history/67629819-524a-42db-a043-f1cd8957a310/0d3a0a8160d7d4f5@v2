@@ -1,0 +1,186 @@
+# Context
+
+The hero section currently pins for 400% of viewport scroll, scrubbing 274 canvas frames to completion. At progress=1.0 the pin releases and the next section snaps in with a white background — a hard, jarring cut. The goals:
+
+1. **Extend the last frame** — hold canvas at frame 274, reveal placeholder text progressively over additional scrolls
+2. **Smooth gradient transition** — blend the last frame into the next section's background (no hard cut)
+3. **Aircraft showcase section** — replace the placeholder section with a Jesko Jets-style split layout: oversized split headline, centered aircraft placeholder, spec grid, CTA
+
+---
+
+# Part 1 — Hero Epilogue + Gradient Transition
+
+## 1a. Extend hero pin: `+=400%` → `+=600%`
+
+**File:** `src/components/sections/Hero/HeroSection.jsx`
+
+Change `end: '+=400%'` to `end: '+=600%'`.
+
+Split the raw ScrollTrigger progress (0→1) into two independent values:
+
+| Raw range | Derived value | Drives |
+|---|---|---|
+| 0 → 0.667 | `frameProgress = clamp(rawP / 0.667, 0, 1)` | Canvas frames 0→274 |
+| 0.667 → 1.0 | `epilogueProgress = clamp((rawP − 0.667) / 0.333, 0, 1)` | Text reveals + gradient |
+
+Update `onUpdate`:
+```js
+const raw = self.progress
+const frameP = Math.min(1, raw / (2/3))
+const epilogueP = Math.min(1, Math.max(0, (raw - 2/3) / (1/3)))
+useHeroProgress.setState({ progress: frameP, epilogueProgress: epilogueP })
+canvasApiRef.current?.setProgress(frameP)
+if (gradientRef.current) gradientRef.current.style.opacity = String(Math.min(1, Math.max(0, (epilogueP - 0.3) / 0.55)))
+```
+
+Also add `gradientRef` to the JSX alongside a new `EpilogueCopy` component.
+
+## 1b. Add `epilogueProgress` to Zustand store
+
+**File:** `src/store/useHeroProgress.js`
+
+Add `epilogueProgress: 0` to initial state.
+
+## 1c. New `EpilogueCopy.jsx`
+
+**File:** `src/components/sections/Hero/EpilogueCopy.jsx`
+
+Subscribes to `epilogueProgress`. Three placeholder lines, each fade+translateY driven by scroll:
+
+| Line | Text | Fade-in threshold |
+|---|---|---|
+| 1 | `WHERE SILENCE MEETS THE SKY` | ep 0.05–0.20 |
+| 2 | `YOUR JOURNEY BEGINS` | ep 0.25–0.40 |
+| 3 | `ABOVE THE ORDINARY` | ep 0.45–0.60 |
+
+Pure inline-style mutations (no re-renders), same pattern as `HeroCopy.jsx`.
+
+## 1d. CSS additions to `HeroSection.module.css`
+
+```css
+.epilogueCopy {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(16px, 3vh, 32px);
+  pointer-events: none;
+}
+
+.epilogueLine {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 4.5vw, 64px);
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  text-shadow: 0 2px 32px rgba(0,0,0,0.4);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.bottomGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45vh;
+  z-index: 3;
+  background: linear-gradient(to bottom, transparent 0%, var(--paper) 100%);
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+}
+```
+
+---
+
+# Part 2 — Aircraft Showcase Section
+
+Replaces the current placeholder `<section>` in `App.jsx`.
+
+## Layout (desktop)
+
+```
+┌────────────────────────────────────────────────────────┐
+│                                                        │
+│  Engineered        [AIRCRAFT PLACEHOLDER]   GULFSTREAM │
+│  for zero                                   G650ER     │
+│  compromise.                                           │
+│                                                        │
+│  ─────────────────────────────────────────────────── │
+│  RANGE          SPEED         PASSENGERS               │
+│  7,500 NM       0.92 MACH     UP TO 12                 │
+│                                                        │
+│  ENDURANCE      CABIN LENGTH  MAX ALTITUDE             │
+│  14 HRS         14.05 M       15,544 M                 │
+│                                                        │
+│                  [ Begin the journey → ]               │
+└────────────────────────────────────────────────────────┘
+```
+
+## Component structure
+
+- `src/components/sections/Showcase/ShowcaseSection.jsx`
+- `src/components/sections/Showcase/ShowcaseSection.module.css`
+
+## Animations (GSAP ScrollTrigger, no pin)
+
+All triggered when section enters viewport (`start: "top 75%"`):
+
+1. **Aircraft placeholder**: `scale 0.88→1.0` + `opacity 0→1` (600ms, ease-out)
+2. **Left headline**: `x -60→0` + `opacity 0→1` (500ms)
+3. **Right label block**: `x 60→0` + `opacity 0→1` (500ms, slight delay)
+4. **Spec items**: stagger `y 24→0` + `opacity 0→1` (400ms each, 80ms stagger)
+5. **CTA**: `y 16→0` + `opacity 0→1` (400ms, last)
+
+## Aircraft placeholder
+
+An inline SVG silhouette (top-down view of generic business jet outline — no external assets needed). Styled with a muted color that complements the paper background.
+
+## Colors
+
+- Background: `var(--paper)` — continues the gradient blend from the hero
+- Text: `var(--ink)` — dark, editorial
+- Stats labels: `rgba(10,13,18,0.45)` — muted
+- Divider: `1px solid rgba(10,13,18,0.1)`
+
+## New entry in `App.jsx`
+
+```jsx
+import ShowcaseSection from '@components/sections/Showcase/ShowcaseSection'
+
+<main>
+  <HeroSection />
+  <ShowcaseSection />
+</main>
+```
+
+---
+
+# Critical Files
+
+| File | Change |
+|---|---|
+| `src/components/sections/Hero/HeroSection.jsx` | Extend pin, split progress, add refs + new children |
+| `src/store/useHeroProgress.js` | Add `epilogueProgress: 0` |
+| `src/components/sections/Hero/EpilogueCopy.jsx` | **new** |
+| `src/components/sections/Hero/HeroSection.module.css` | Add 3 new rule blocks |
+| `src/components/sections/Showcase/ShowcaseSection.jsx` | **new** |
+| `src/components/sections/Showcase/ShowcaseSection.module.css` | **new** |
+| `src/App.jsx` | Replace placeholder section with `<ShowcaseSection />` |
+
+---
+
+# Verification
+
+1. `npm run dev`
+2. Scroll hero: frames scrub as before for first 2/3 of pin
+3. Last third of pin: canvas freezes at final frame, 3 placeholder text lines appear sequentially
+4. Bottom gradient fades in, canvas bleeds into warm white
+5. Pin releases, `ShowcaseSection` is already visible beneath the faded gradient
+6. Aircraft showcase scroll-triggers fire: left headline, right label, aircraft SVG, specs, CTA all animate in
+7. No abrupt jump between sections
+8. Test reduced-motion: frames snap to 274, epilogue/gradient both visible immediately

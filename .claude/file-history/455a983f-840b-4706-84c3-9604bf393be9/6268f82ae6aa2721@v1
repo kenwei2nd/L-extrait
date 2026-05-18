@@ -1,0 +1,196 @@
+# Build Status — The Obsidian Assembly Clone
+
+**Last Updated:** 2026-05-14
+**Status:** Phase 1-4 Complete, Phase 5-6 In Progress
+
+---
+
+## ✅ Completed
+
+### Phase 1: Design System
+- [x] `css/tokens.css` — All CSS custom properties (colors, type scale, spacing, easing, grid)
+- [x] `css/base.css` — Reset, typography utilities, grid system (.-w), split text styles
+- [x] Google Fonts CDN integration (Cormorant Garamond, DM Serif Display, Inter)
+
+### Phase 2: Header + Navigation
+- [x] `css/header.css` — Fixed header with logo, nav buttons, hamburger menu
+- [x] Hamburger icon with gradient animation effect
+- [x] Header entrance animation on load
+- [x] `-scrolled`, `-dark`, `-hidden` state classes
+
+### Phase 3: Text Splitting
+- [x] `js/split.js` — Character splitting utility
+- [x] `[data-split]` attribute processing
+- [x] `.-s-char` span generation with stagger delays
+
+### Phase 4: Scroll System
+- [x] `js/scroll.js` — Lenis smooth scroll + GSAP ScrollTrigger
+- [x] Viewport unit calculation (`--vh`, `--vw`)
+- [x] `-loaded` and `-ready` class animation sequence
+- [x] RAF-based scroll event loop
+
+### Phase 4b: Header & Menu
+- [x] `js/header.js` — Scroll threshold detection (50% vh → `-scrolled`)
+- [x] Header color system via `[data-header-color]` sections → `-dark` class
+- [x] `js/menu.js` — Menu/form overlay toggle
+- [x] `-isolate` class for scroll locking
+- [x] Form submission handlers
+
+### Phase 5a: Home Page Sections (Partial)
+- [x] `css/home.css` — All section layouts and basic styles
+- [x] HTML structure for all 9 home sections (Welcome, Places, Objects, etc.)
+- [x] `js/places.js` — 7-slide carousel with rotation progress + autoplay
+- [x] `js/objects.js` — 4-card sequence with GSAP ScrollTrigger
+- [x] `js/updates.js` — 5-item hover carousel with state machine
+- [x] `js/admission.js` — Form validation and submission
+
+### Utilities
+- [x] `js/main.js` — Entry point / initialization orchestrator
+- [x] `js/webgl-stone.js` — WebGL placeholder class (stub)
+- [x] `CLAUDE.md` — Developer guide with architecture notes
+- [x] `css/footer.css` — Footer styles with stone underlay
+
+---
+
+## ⚠️ In Progress / Needs Implementation
+
+### Phase 5b: Home Page Sections (Remaining)
+- [ ] Welcome section: SVG arch clipPath animation (uses GSAP ScrollTrigger scrub)
+- [ ] Welcome section: Stone spotlight with CSS spotlight effect
+- [ ] Places section: WebGL relief background canvas
+- [ ] Connection section: Parallax text with GSAP ScrollTrigger
+- [ ] Footer: Full content + nav grid layout + star mask rendering
+- [ ] Admission: Image carousel (3-image sequence)
+
+### Phase 6: WebGL Stone Effect
+- [ ] Port `DynamicReliefLampEffect` shader logic from original
+- [ ] Implement ping-pong framebuffer fluid simulation
+- [ ] Mouse-driven light position updates
+- [ ] Scroll-based parallax (`u_scrollY` uniform)
+- [ ] IntersectionObserver pause/resume on viewport visibility
+
+### Phase 7: Inner Pages
+- [ ] `places.html` — Inner page stub (header + footer wrapper)
+- [ ] `objects.html` — Inner page stub
+- [ ] `about.html` — Inner page stub
+- [ ] `people.html` — Inner page stub
+- [ ] `404.html` — 404 error page
+- [ ] Page transition animation on link navigation
+
+---
+
+## 🖼️ Assets Needed
+
+Create these directories and files:
+
+```
+images/
+  ├── stone-wall.webp          ← Dark stone texture (unsplash: rocky/granite)
+  ├── offices/
+  │   ├── 1.jpg through 7.jpg  ← Dark architectural interiors (Places carousel)
+  ├── guys/
+  │   └── g-1.webp             ← Silhouette/abstract person (menu icon)
+  ├── star-mask.svg            ← 6-pointed star (footer card edge mask)
+  ├── footer-path.svg          ← Curved SVG path for footer card bg
+  ├── footer-mask.svg          ← Footer underlay shape mask
+  ├── r16.svg                  ← Rounded rect mask (dropdown select)
+  ├── mask-fade-4.webp         ← Circular radial fade black→transparent
+  ├── mask-fade-20.webp        ← Wider radial fade (underlay)
+  └── main/
+      └── (SVG icons referenced in menus if any)
+
+fav/
+  ├── favicon.ico
+  ├── apple-touch-icon-57x57.png
+  ├── apple-touch-icon-72x72.png
+  ├── apple-touch-icon-114x114.png
+  ├── apple-touch-icon-120x120.png
+  ├── apple-touch-icon-144x144.png
+  ├── apple-touch-icon-152x152.png
+  └── mstile-144x144.png
+```
+
+---
+
+## 🚀 How to Test Current State
+
+```bash
+# Serve locally
+npx serve .
+
+# Or with Python
+python -m http.server 8080
+
+# Then open: http://localhost:8000 (or 8080)
+```
+
+**Currently working:**
+- Header with scroll-responsive hamburger menu
+- Menu/form overlays open/close
+- Form validation on submission
+- Text character splitting animation
+- Places carousel with auto-advance
+- Updates hover carousel
+- Scroll progress tracking (objects section)
+- Admission form validation
+
+**Currently NOT working:**
+- Images (broken image refs until assets added)
+- WebGL stone effect (stub implementation)
+- Welcome arch SVG animation
+- Connection parallax
+- Footer content and layout
+- Inner page navigation (404 on link clicks)
+
+---
+
+## 📝 Next Steps (Priority Order)
+
+1. **Add placeholder images** — Download from unsplash or generate to unblock visual development
+2. **Complete footer layout** — Add `.block` card with nav grid, credits, etc.
+3. **Welcome SVG arch animation** — Implement GSAP ScrollTrigger scrub on `#arch-path d` attribute
+4. **Connection parallax** — GSAP ScrollTrigger parallax on text with `--connection-progress` CSS var
+5. **WebGL stone effect** — Port shader or use simplified CSS alternative (can be deferred)
+6. **Inner page stubs** — Add places.html, objects.html, about.html, people.html, 404.html
+7. **Page transition overlay** — Animate on `<a>` click before `window.location` change
+8. **CSS refinements** — Responsive media queries, mobile touch states, accessibility
+
+---
+
+## 📦 File Structure (as of now)
+
+```
+e:\CLAUDE\Obsidian\
+├── CLAUDE.md                   ✅ Developer guide
+├── BUILD_STATUS.md             ✅ This file
+├── index.html                  ✅ Home page
+├── css/
+│   ├── tokens.css              ✅ Design system
+│   ├── base.css                ✅ Reset + utilities
+│   ├── header.css              ✅ Header styles
+│   ├── home.css                ✅ Section layouts
+│   └── footer.css              ✅ Footer styles
+├── js/
+│   ├── split.js                ✅ Text splitting
+│   ├── scroll.js               ✅ Lenis + ScrollTrigger
+│   ├── header.js               ✅ Scroll state + color
+│   ├── menu.js                 ✅ Overlay handlers
+│   ├── places.js               ✅ Carousel
+│   ├── objects.js              ✅ Sequence
+│   ├── updates.js              ✅ Hover carousel
+│   ├── admission.js            ✅ Form handling
+│   ├── webgl-stone.js          ⚠️ Placeholder
+│   └── main.js                 ✅ Entry point
+├── images/                     ❌ Needs images
+└── fav/                        ❌ Needs favicons
+```
+
+---
+
+## Notes for Next Session
+
+- The foundation is solid: all core animation systems are in place (GSAP ScrollTrigger, Lenis, character splitting, carousel patterns)
+- Design system is complete with all tokens defined
+- The main work remaining is: adding assets, completing section-specific animations, and building inner pages
+- WebGL stone effect can be deferred in favor of a simpler CSS gradient approach if time is limited
+- The split text animation (`.-s-char` hover states) needs desktop-only character rotation effect in the `:after` pseudo-element layer

@@ -1,0 +1,14 @@
+import { useLenisScroll } from '@hooks/useLenisScroll'
+import HeroSection from '@components/sections/Hero/HeroSection'
+import ShowcaseSection from '@components/sections/Showcase/ShowcaseSection'
+
+export default function App() {
+  useLenisScroll()
+
+  return (
+    <main>
+      <HeroSection />
+      <ShowcaseSection />
+    </main>
+  )
+}

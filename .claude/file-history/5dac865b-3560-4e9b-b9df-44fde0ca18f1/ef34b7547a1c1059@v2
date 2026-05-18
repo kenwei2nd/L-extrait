@@ -1,0 +1,134 @@
+# Video-to-Website Skill
+
+Transform any video into a premium scroll-driven animated website with GSAP, canvas frame rendering, and layered animation choreography.
+
+## What This Skill Does
+
+This skill guides you through building interactive websites where:
+- Video frames play back as users scroll
+- Multiple animation types work together (fade, slide, scale, clip-reveal, etc.)
+- Canvas renders frames at the center while text content slides in from the sides
+- Smooth scroll experience with Lenis
+- Counter animations, marquee text, dark overlays, and persistent CTAs
+
+## Skill Structure
+
+```
+video-to-website/
+├── SKILL.md                 # Full documentation & workflow
+├── README.md               # This file
+├── scripts/
+│   └── analyze-video.ps1   # PowerShell script to analyze video properties
+└── resources/
+    ├── index-template.html # HTML structure template
+    ├── style-template.css  # CSS foundation & layouts
+    └── app-template.js     # JavaScript with GSAP & Canvas logic
+```
+
+## Quick Start
+
+1. **Analyze your video:**
+   ```powershell
+   .\scripts\analyze-video.ps1 -VideoPath "your-video.mp4"
+   ```
+   This tells you optimal frame extraction settings.
+
+2. **Extract frames from video:** (requires FFmpeg on PATH)
+   ```bash
+   mkdir frames
+   ffmpeg -i "your-video.mp4" -vf "fps=10,scale=1920:-1" -c:v libwebp -quality 80 "frames/frame_%04d.webp"
+   ```
+
+3. **Copy templates:**
+   - Copy `resources/index-template.html` → `index.html`
+   - Copy `resources/style-template.css` → `css/style.css`
+   - Copy `resources/app-template.js` → `js/app.js`
+
+4. **Customize:**
+   - Update brand name, text sections, colors
+   - Adjust animation timings and scroll ranges
+   - Run `npx serve .` and scroll to test
+
+## Key Requirements (Non-Negotiable)
+
+✓ Lenis smooth scroll (not native scroll)  
+✓ 4+ different animation types (never repeat consecutively)  
+✓ Staggered reveals (label → heading → body → CTA)  
+✓ Side-aligned text ONLY (40% zones, never centered)  
+✓ Massive typography (hero 12rem+, headings 4rem+)  
+✓ Canvas frame animation synced to scroll  
+✓ Dark overlay for stats sections  
+✓ CTA section persists at bottom (`data-persist="true"`)  
+✓ Frame extraction rate 1.8-2.2x (completes by 55% scroll)  
+
+## Templates Included
+
+- **index-template.html**: Pre-structured DOM with all required elements
+- **style-template.css**: Complete CSS foundation with mobile responsive design
+- **app-template.js**: Full JavaScript initialization with animations ready to go
+- **analyze-video.ps1**: Helper script to determine optimal FFmpeg settings
+
+## Animation Types Available
+
+| Type | Entrance Style | Use Case |
+|------|---|---|
+| `fade-up` | Vertical entrance with opacity | General feature sections |
+| `slide-left` | Slides in from left | Right-aligned content |
+| `slide-right` | Slides in from right | Left-aligned content |
+| `scale-up` | Scales from center | Important highlights |
+| `rotate-in` | Rotation + entrance | Dynamic emphasis |
+| `stagger-up` | Staggered vertical | Stats, lists |
+| `clip-reveal` | Clip-path wipe | Hero transitions |
+
+## Common Customizations
+
+**Change brand colors:**
+```css
+:root {
+  --bg-light: #f5f3f0;
+  --bg-dark: #111111;
+  --accent: #0066cc;
+}
+```
+
+**Adjust scroll range (slower/faster):**
+```js
+const FRAME_SPEED = 1.8;  // 1.8-2.2 range
+```
+
+**Change animation timing:**
+```js
+case "fade-up":
+  tl.from(children, { y: 50, opacity: 0, stagger: 0.12, duration: 0.9 });
+```
+
+**Adjust section enter/leave points:**
+```html
+<section data-enter="22" data-leave="38" data-animation="fade-up">
+```
+(22% and 38% of total scroll height)
+
+## Troubleshooting
+
+**Frames not loading:**
+- Must serve via HTTP (use `npx serve .` or python server)
+- Check frame file names match pattern `frame_XXXX.webp`
+
+**Choppy scrolling:**
+- Reduce frame count (extract at lower fps)
+- Increase `scrub` value in ScrollTrigger
+
+**White flashes:**
+- Ensure loader doesn't hide until all frames loaded
+- Check canvas background color sampling
+
+**Blurry canvas:**
+- Canvas must respect `devicePixelRatio` for crisp rendering
+- Verify canvas width/height are set before drawing
+
+## Resources
+
+- Lenis: https://lenis.studiomoniker.com/
+- GSAP: https://gsap.com/
+- ScrollTrigger: https://gsap.com/docs/v3/Plugins/ScrollTrigger/
+- FFmpeg Docs: https://ffmpeg.org/documentation.html

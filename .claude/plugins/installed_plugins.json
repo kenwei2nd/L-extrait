@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "plugins": {
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\kenwe\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-05-04T03:14:19.196Z",
+        "lastUpdated": "2026-05-04T03:14:19.196Z"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\kenwe\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\5.1.0",
+        "version": "5.1.0",
+        "installedAt": "2026-05-04T03:14:55.358Z",
+        "lastUpdated": "2026-05-06T07:36:52.111Z",
+        "gitCommitSha": "e7a2d16476bf042e9add4699c9d018a90f86e4a6"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\kenwe\\.claude\\plugins\\cache\\claude-plugins-official\\skill-creator\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-05-04T03:15:07.366Z",
+        "lastUpdated": "2026-05-04T03:15:07.366Z"
+      }
+    ],
+    "github@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\kenwe\\.claude\\plugins\\cache\\claude-plugins-official\\github\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-05-04T03:15:14.448Z",
+        "lastUpdated": "2026-05-04T03:15:14.448Z"
+      }
+    ]
+  }
+}

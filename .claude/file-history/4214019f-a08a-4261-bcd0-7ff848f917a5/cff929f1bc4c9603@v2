@@ -1,0 +1,49 @@
+# Video Analysis Script
+# Usage: .\analyze-video.ps1 -VideoPath "path/to/video.mp4"
+
+param(
+  [string]$VideoPath = $(Read-Host "Enter video file path")
+)
+
+if (!(Test-Path $VideoPath)) {
+  Write-Host "Error: Video file not found at $VideoPath" -ForegroundColor Red
+  exit 1
+}
+
+Write-Host "Analyzing video: $VideoPath" -ForegroundColor Cyan
+
+$ffprobePath = "ffprobe"
+$analysis = & $ffprobePath -v error -select_streams v:0 -show_entries stream=width,height,duration,r_frame_rate,nb_frames -of csv=p=0 $VideoPath
+
+$values = $analysis -split ','
+$width, $height, $duration, $frameRate, $nbFrames = $values[0], $values[1], $values[2], $values[3], $values[4]
+
+Write-Host "`n=== Video Analysis ===" -ForegroundColor Green
+Write-Host "Resolution: $width x $height"
+Write-Host "Duration: $duration seconds"
+Write-Host "Frame Rate: $frameRate"
+Write-Host "Total Frames: $nbFrames"
+
+# Calculate optimal extraction settings
+$durationSeconds = [double]$duration
+$originalFps = if ($frameRate -match '(\d+)/(\d+)') { [double]$Matches[1] / [double]$Matches[2] } else { [double]$frameRate }
+
+if ($durationSeconds -lt 10) {
+  $targetFps = [math]::Min($originalFps, 30)
+  $recommendation = "Short video: extract at ~$targetFps fps, expect ~$([int]($durationSeconds * $targetFps)) frames"
+} elseif ($durationSeconds -le 30) {
+  $targetFps = [math]::Min(15, $originalFps)
+  $recommendation = "Medium video: extract at ~$targetFps fps, expect ~$([int]($durationSeconds * $targetFps)) frames"
+} else {
+  $targetFps = [math]::Min(8, $originalFps)
+  $recommendation = "Long video: extract at ~$targetFps fps, expect ~$([int]($durationSeconds * $targetFps)) frames"
+}
+
+Write-Host "`n=== Recommendations ===" -ForegroundColor Yellow
+Write-Host $recommendation
+Write-Host "Target: 150-300 frames for optimal scroll experience"
+if ($width -gt 1920) {
+  Write-Host "Output resolution: 1920px wide (scale down from $width)"
+} else {
+  Write-Host "Output resolution: $width px wide (native)"
+}

@@ -1,0 +1,116 @@
+import { useEffect, useRef } from 'react'
+import { gsap, ScrollTrigger } from '@animations/gsap.config'
+import styles from './AboutSection.module.css'
+
+const CARDS = [
+  {
+    title: 'Direct Access to\nPrivate Travel',
+    body: 'Bypass commercial terminals entirely. Your aircraft is staged, staffed, and waiting at a private facility of your choosing — departure on your schedule, not the airline\'s.',
+  },
+  {
+    title: 'Your Freedom to\nEnjoy Life',
+    body: 'We value your time above all else. Aether gives you the freedom to live, work, and relax wherever life takes you — without queues, without compromise.',
+  },
+  {
+    title: 'Precision and\nExcellence',
+    body: 'Every detail of your flight — from route planning and in-flight catering to ground transfers — reflects our dedication to perfection at every altitude.',
+  },
+  {
+    title: 'Global Reach,\nPersonal Touch',
+    body: 'With access to 150+ destinations worldwide, Aether brings the world closer to you. Our team manages every aspect of your journey so you never have to.',
+  },
+]
+
+export default function AboutSection() {
+  const sectionRef = useRef(null)
+  const eyebrowRef = useRef(null)
+  const statementRef = useRef(null)
+  const bodyRef = useRef(null)
+  const dividerRef = useRef(null)
+  const cardsRef = useRef(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const ctx = gsap.context(() => {
+      // Statement block animates in first
+      gsap.timeline({
+        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+      })
+        .fromTo(eyebrowRef.current,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+          0
+        )
+        .fromTo(statementRef.current,
+          { opacity: 0, y: 32 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+          0.1
+        )
+        .fromTo(bodyRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+          0.35
+        )
+        .fromTo(dividerRef.current,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.7, ease: 'power2.out' },
+          0.5
+        )
+
+      // Cards stagger in on their own trigger
+      gsap.fromTo(
+        cardsRef.current?.children ?? [],
+        { opacity: 0, y: 36 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          stagger: 0.1,
+          scrollTrigger: { trigger: cardsRef.current, start: 'top 80%', once: true },
+        }
+      )
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <section ref={sectionRef} className={styles.about}>
+      <div className={styles.statement}>
+        <p ref={eyebrowRef} className={styles.eyebrow}>ABOUT AETHER</p>
+
+        <h2 ref={statementRef} className={styles.headline}>
+          We don't move people.
+          <br />
+          We move <em>time.</em>
+        </h2>
+
+        <p ref={bodyRef} className={styles.body}>
+          Aether is a private aviation collective built on a single principle — that
+          the journey should be as extraordinary as the destination. Every aircraft in
+          our fleet is selected, crewed, and managed for one purpose: to disappear
+          around you at 40,000 feet.
+        </p>
+      </div>
+
+      <div ref={dividerRef} className={styles.divider} />
+
+      <div ref={cardsRef} className={styles.grid}>
+        {CARDS.map(({ title, body }) => (
+          <div key={title} className={styles.card}>
+            <h3 className={styles.cardTitle}>
+              {title.split('\n').map((line, i) => (
+                <span key={i}>{line}{i < title.split('\n').length - 1 && <br />}</span>
+              ))}
+            </h3>
+            <div className={styles.cardRule} />
+            <p className={styles.cardBody}>{body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}

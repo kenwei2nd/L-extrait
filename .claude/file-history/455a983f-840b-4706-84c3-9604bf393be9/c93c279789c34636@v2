@@ -1,0 +1,580 @@
+/* Base Styles & Reset — The Obsidian Assembly Clone */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+html {
+  scroll-behavior: auto;
+  color: var(--c-white);
+  background-color: var(--c-black);
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--body-font-size);
+  line-height: var(--body-line-height);
+  background-color: var(--c-black);
+  color: var(--c-white);
+}
+
+/* Typography Reset */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-family: var(--font-t-1);
+  line-height: var(--body-line-height);
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+hr {
+  background-color: rgba(var(--c-white-rgb), 0.1);
+  border: none;
+  height: 1px;
+  margin: 0;
+}
+
+/* Form Reset */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+input,
+textarea {
+  background-color: transparent;
+  border: none;
+  border-radius: 0.2rem;
+  box-sizing: border-box;
+  padding: 0.4rem;
+  margin: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--c-purple);
+  opacity: 1;
+}
+
+input[disabled]::placeholder,
+textarea[disabled]::placeholder {
+  opacity: 0;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: relative;
+  touch-action: manipulation;
+}
+
+button span,
+button * {
+  display: block;
+  position: relative;
+}
+
+/* Images & Media */
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+img,
+svg,
+video {
+  display: block;
+  width: 100%;
+}
+
+a {
+  color: var(--c-white);
+  text-decoration: none;
+}
+
+/* ===== TYPOGRAPHY UTILITIES ===== */
+
+/* Heading sizes */
+.-h0 {
+  font-size: var(--h0);
+  line-height: var(--h0-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h1 {
+  font-size: var(--h1);
+  line-height: var(--h1-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h2 {
+  font-size: var(--h2);
+  line-height: var(--h2-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h3 {
+  font-size: var(--h3);
+  line-height: var(--h3-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h4 {
+  font-size: var(--h4);
+  line-height: var(--h4-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h5 {
+  font-size: var(--h5);
+  line-height: var(--h5-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-h6 {
+  font-size: var(--h6);
+  line-height: var(--h6-lh);
+  font-family: var(--font-t-1);
+  font-weight: 400;
+}
+
+.-hp {
+  font-size: var(--p);
+  line-height: var(--body-line-height);
+}
+
+.-hm {
+  font-size: var(--m);
+  line-height: var(--body-line-height);
+}
+
+.-mm {
+  font-family: var(--font-b-medium);
+  font-size: var(--mm);
+  line-height: var(--body-line-height);
+  font-weight: 600;
+}
+
+.-p {
+  font-size: var(--p);
+  line-height: var(--body-line-height);
+}
+
+.-m {
+  font-size: var(--m);
+  line-height: var(--body-line-height);
+}
+
+.-lrg {
+  font-size: var(--large);
+  line-height: var(--large-lh);
+  font-family: var(--font-t-2);
+  font-weight: 400;
+}
+
+.-lrg-max {
+  font-size: calc(var(--large) * var(--type-step));
+  line-height: var(--large-lh);
+  font-family: var(--font-t-2);
+  font-weight: 400;
+}
+
+/* Text alignment */
+.-tac { text-align: center; }
+.-taj { text-align: justify; text-align-last: justify; }
+
+/* Text transform */
+.-up { text-transform: uppercase; }
+.-noup { text-transform: none; }
+
+/* ===== GRID SYSTEM ===== */
+
+.-w {
+  display: grid;
+  grid-template-columns: repeat(var(--g-columns, 12), 1fr);
+  gap: var(--g-gap);
+  margin: 0 var(--g-margin);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.-w > * {
+  --left: 1;
+  --top: 1;
+  --width: 1;
+  --height: 1;
+  grid-column-start: var(--left, 1);
+  grid-column-end: calc(var(--left, 1) + var(--width, 1));
+  grid-row-start: var(--top, 1);
+  grid-row-end: calc(var(--top, 1) + var(--height, 1));
+}
+
+/* ===== DISPLAY UTILITIES ===== */
+
+.-dn { display: none; }
+
+/* ===== SPLIT TEXT ANIMATION ===== */
+
+.-s-char {
+  position: relative;
+  transform: translateZ(0);
+  transition: translate var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s);
+  translate: 0 0;
+}
+
+.-s-char:after {
+  color: rgba(var(--c-yellow-rgb), 0);
+  content: attr(data-split-content);
+  display: inline-block;
+  position: absolute;
+  inset: 0;
+  scale: 1.2;
+  translate: 0 100%;
+  transition: translate var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s),
+              color var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s),
+              scale var(--f-cubic) calc(0.9s + var(--char-index, 0) * 0.15s);
+  transform: translateZ(0);
+}
+
+/* ===== TRANSITIONS (CSS Classes) ===== */
+
+/* Page transition enter/leave */
+.-t-transition-enter-active,
+.-t-transition-leave-active {
+  pointer-events: none;
+}
+
+.-t-transition-enter-from,
+.-t-transition-leave-to {
+  opacity: 0;
+}
+
+/* Menu overlay enter/leave */
+.-t-menu-enter-active,
+.-t-menu-leave-active {
+  pointer-events: none;
+}
+
+.-t-menu-enter-from,
+.-t-menu-leave-to {
+  opacity: 0;
+}
+
+/* Form overlay enter/leave */
+.-t-form-enter-active,
+.-t-form-leave-active {
+  pointer-events: none;
+}
+
+.-t-form-enter-from,
+.-t-form-leave-to {
+  opacity: 0;
+}
+
+/* Success modal */
+.-t-submission-enter-active,
+.-t-submission-leave-active {
+  pointer-events: none;
+}
+
+.-t-submission-enter-from,
+.-t-submission-leave-to {
+  opacity: 0;
+}
+
+/* ===== STATE CLASSES ===== */
+
+html.not\:-ready {
+  /* Before initial load, hide most content */
+}
+
+html.html\:-loaded header {
+  animation: headerEnter 2.1s var(--f-cubic-in);
+}
+
+@keyframes headerEnter {
+  from {
+    transform: translate3d(0, -150%, 0) skew(-10deg, -5deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) skew(0, 0);
+  }
+}
+
+html.html\:-isolate {
+  overflow: hidden;
+}
+
+/* ===== PAGE TRANSITION OVERLAY ===== */
+
+#page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+#page-transition .g {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: 100%;
+}
+
+#page-transition .g span {
+  background-color: var(--c-black);
+  transform: scaleY(0);
+  transform-origin: bottom center;
+}
+
+#page-transition.-active .g span {
+  transform: scaleY(1);
+  transition: transform 0.6s var(--f-fast);
+  transition-delay: calc((var(--order) - 1) * 0.07s);
+}
+
+#page-transition .t {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s var(--f-cubic);
+}
+
+#page-transition.-active .t {
+  opacity: 1;
+  transition-delay: 0.5s;
+}
+
+#page-transition .t span {
+  color: var(--c-yellow);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#mobile-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background-color: var(--c-black);
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  pointer-events: none;
+}
+
+#mobile-transition.-active {
+  transform: scaleY(1);
+  transition: transform 0.5s var(--f-fast);
+}
+
+/* Overlay / full-screen menu & form base */
+.full-screen-menu,
+.full-screen-form {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+}
+
+.full-screen-menu .overlay,
+.full-screen-form .overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(var(--c-black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.full-screen-menu .oy,
+.full-screen-form .oy {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: var(--h1) 0 var(--h2);
+}
+
+.full-screen-menu .-w,
+.full-screen-form .-w {
+  position: relative;
+  z-index: 1;
+}
+
+.button-close {
+  --left: 11;
+  --width: 2;
+  color: var(--c-yellow);
+  font-family: var(--font-b-medium);
+  font-size: var(--mm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  align-self: start;
+}
+
+/* Menu nav */
+.full-screen-menu nav {
+  --left: 1;
+  --width: 12;
+  display: flex;
+  flex-direction: column;
+  gap: var(--g-gap);
+  padding-top: var(--h1);
+}
+
+.full-screen-menu nav .guy {
+  display: flex;
+  align-items: center;
+  gap: var(--p);
+  margin-bottom: var(--h3);
+}
+
+.full-screen-menu nav .guy img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.full-screen-menu nav a,
+.full-screen-menu nav span {
+  color: var(--c-yellow);
+  display: block;
+  font-family: var(--font-t-1);
+}
+
+/* Form overlay layout */
+.full-screen-form form {
+  --left: 3;
+  --width: 8;
+  display: grid;
+  gap: var(--h3);
+  padding-top: var(--h1);
+}
+
+.full-screen-form .title {
+  --left: 1;
+  --width: 12;
+}
+
+.full-screen-form .field {
+  display: grid;
+  gap: var(--m);
+}
+
+.full-screen-form input,
+.full-screen-form textarea {
+  background-color: rgba(var(--c-white-rgb), 0.05);
+  border: 1px solid var(--c-grey);
+  border-radius: var(--g-gap);
+  padding: var(--m) var(--p);
+  color: var(--c-white);
+  width: 100%;
+}
+
+.full-screen-form input:focus,
+.full-screen-form textarea:focus {
+  border-color: var(--c-yellow);
+  outline: none;
+}
+
+.full-screen-form .agreement label {
+  display: flex;
+  gap: var(--m);
+  align-items: flex-start;
+  color: rgba(var(--c-white-rgb), 0.6);
+}
+
+.full-screen-form .button-wrap {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Generic button */
+.button.-big {
+  background-color: var(--c-yellow);
+  color: var(--c-black);
+  font-family: var(--font-b-medium);
+  font-weight: 600;
+  font-size: var(--m);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--m) var(--h3);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background-color 0.3s var(--f-cubic), color 0.3s var(--f-cubic);
+}
+
+.button.-big:hover {
+  background-color: var(--c-white);
+}
+
+/* Success modal */
+.submission-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submission-modal .overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(var(--c-black-rgb), 0.8);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.submission-modal .content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--c-stone);
+  border: 1px solid var(--c-grey);
+  border-radius: var(--h3);
+  padding: var(--h1);
+  max-width: 480px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--h3);
+  text-align: center;
+}
+
+.-nl {
+  text-decoration: none;
+}
