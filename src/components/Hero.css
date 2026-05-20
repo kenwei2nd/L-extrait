@@ -97,7 +97,7 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: clamp(580px, 72vw, 1200px);
+  width: clamp(670px, 84vw, 1420px);
   z-index: 20;
   pointer-events: none;
   transform: translateX(-50%);
@@ -329,7 +329,7 @@
   }
   .hero__rail { display: none; }
   .hero__product-wrap {
-    width: 92vw;
+    width: 100vw;
     bottom: 0;
   }
   .hero__cta {
