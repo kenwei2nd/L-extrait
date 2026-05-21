@@ -3,6 +3,7 @@ import Hero from './components/Hero.jsx'
 import Concentration from './components/Concentration.jsx'
 import Architecture from './components/Architecture.jsx'
 import Aura from './components/Aura.jsx'
+import Footer from './components/Footer.jsx'
 import { createSmoothScroll } from './lib/scroll.js'
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
       <Concentration />
       <Architecture />
       <Aura />
+      <Footer />
     </>
   )
 }

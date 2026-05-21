@@ -1,23 +1,26 @@
 /* ======================================================================
    AURELIA — L'EXTRAIT  SECTION 4: THE AURA
-   Split-screen long scroll: 40% sticky narrative | 60% parallax canvas
-   Min-height 400vh forces a deliberate, extended scroll experience.
-   Z-index stack:
+   Asymmetric overlap mosaic with differential parallax.
+   No pin — sticky left narrative + tall right canvas of overlapping
+   cards that parallax at independent rates to create depth.
+   Z-index stack inside .aura:
+     0  base
      1  film grain ::before
-     2  grid (left sticky + right canvas)
+     2  grid (left sticky narrative + right mosaic)
+     3  chapter mark
    ====================================================================== */
 
 .aura {
   position: relative;
   width: 100%;
-  min-height: 400vh;
+  min-height: 260vh;
   background: #000000;
   color: #efe4cf;
   isolation: isolate;
   overflow-x: hidden;
 }
 
-/* Film grain — identical to Architecture */
+/* Film grain — same SVG noise as Architecture */
 .aura::before {
   content: '';
   position: absolute;
@@ -33,28 +36,40 @@
 
 /* ── Grid ── */
 .aura__grid {
-  display: grid;
-  grid-template-columns: 40% 60%;
-  align-items: start;
-  padding: 10vh 5vw;
-  min-height: 400vh;
   position: relative;
   z-index: 2;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 4vw;
+  padding: 0 5vw;
 }
 
 /* ── Left: sticky narrative ── */
 .aura__left {
+  position: relative;
+}
+
+.aura__left-inner {
   position: sticky;
-  top: 30vh;
-  height: fit-content;
+  top: 22vh;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding-right: 4vw;
+  gap: 24px;
+  padding-right: 2vw;
+  max-width: 540px;
+}
+
+.aura__eyebrow,
+.aura__headline,
+.aura__body,
+.aura__cta {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(12px);
+  will-change: transform, opacity, filter;
 }
 
 .aura__eyebrow {
-  margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 11px;
   font-weight: 400;
@@ -67,8 +82,8 @@
   margin: 0;
   font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   font-weight: 400;
-  font-size: clamp(52px, 6.5vw, 120px);
-  line-height: 0.9;
+  font-size: clamp(52px, 6vw, 112px);
+  line-height: 0.92;
   letter-spacing: 0.005em;
   color: #efe4cf;
   text-shadow: 0 4px 60px rgba(0, 0, 0, 0.55);
@@ -78,20 +93,21 @@
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 300;
-  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  font-size: clamp(0.95rem, 1.05vw, 1.15rem);
   line-height: 1.7;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 85%;
+  color: rgba(239, 228, 207, 0.72);
+  max-width: 90%;
 }
 
-/* CTA pill — exact Hero values */
+/* CTA pill — identical to Hero */
 .aura__cta {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 18px;
   padding: 13px 18px 13px 30px;
+  margin-top: 8px;
   border-radius: 999px;
   border: 1px solid rgba(201, 147, 58, 0.45);
   background:
@@ -154,105 +170,275 @@
   height: 14px;
 }
 
-/* ── Right: 400vh parallax canvas ── */
+/* ── Right: tall overlap-mosaic canvas ── */
 .aura__right {
   position: relative;
-  height: 400vh;
+  /* Slightly shorter than the section so cards have room to parallax
+     without leaving empty space below the last card. */
+  height: 230vh;
 }
 
-/* Shared asset base */
-.aura__asset {
+/* Lifestyle backdrop — full SECTION-WIDTH banner sitting in the lower
+   half. Lives outside .aura__grid so it can span the entire screen.
+   z-index 0 places it behind both the narrative column and the right
+   mosaic; a horizontal darkening gradient on the left keeps the
+   sticky narrative legible. Slowest parallax — deepest plane. */
+.aura__backdrop {
   position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100vw;
+  aspect-ratio: 21 / 9;
+  z-index: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 2px;
+  background: #060403;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
   will-change: transform;
 }
 
-.aura__asset img,
-.aura__asset video {
+.aura__backdrop-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: saturate(105%) contrast(102%) brightness(0.9);
+}
+
+/* Left-side darkening shade — keeps the narrative readable on top */
+.aura__backdrop-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.92) 0%,
+      rgba(0, 0, 0, 0.55) 22%,
+      rgba(0, 0, 0, 0.15) 42%,
+      rgba(0, 0, 0, 0) 60%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0) 25%,
+      rgba(0, 0, 0, 0) 75%,
+      rgba(0, 0, 0, 0.45) 100%
+    );
+}
+
+/* Brand statement — overlaid on the lower part of the lifestyle banner */
+.aura__brand {
+  position: absolute;
+  top: 72%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.aura__brand-eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(201, 147, 58, 0.95);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.65);
+}
+
+.aura__brand-mark {
+  margin: 0;
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(56px, 7.5vw, 144px);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  color: #efe4cf;
+  text-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(0, 0, 0, 0.5);
+}
+
+/* Cards — absolutely positioned, asymmetric overlap layout */
+.aura__card {
+  position: absolute;
+  overflow: hidden;
+  background: #060403;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  will-change: transform;
+}
+
+.aura__card-media {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: grayscale(30%) contrast(110%);
+  filter: grayscale(15%) contrast(108%);
 }
 
-/* Asset 1 — portrait, upper left */
-.aura__asset--1 {
-  top: 5%;
-  left: 0;
-  width: 65%;
+/* Asset label — sits inside the hairline frame, top-left */
+.aura__card-label {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 2;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(239, 228, 207, 0.92);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0)
+  );
+  padding: 6px 10px 18px;
+  margin: -14px -16px 0;
+  pointer-events: none;
+}
+
+/* Asymmetric overlap composition — cards intentionally cross zones
+   and sit on top of each other; differential parallax animates the
+   overlap dynamically as you scroll. */
+
+.aura__card--1 {
+  /* Portrait, top-left */
+  top: 2%;
+  left: 0%;
+  width: 56%;
   aspect-ratio: 3 / 4;
-}
-
-/* Asset 2 — wide cinematic, right, overlaps Asset 1 */
-.aura__asset--2 {
-  top: 28%;
-  right: 5%;
-  width: 85%;
-  aspect-ratio: 16 / 9;
   z-index: 2;
 }
 
-/* Asset 3 — square detail, mid-scroll */
-.aura__asset--3 {
-  top: 58%;
-  left: 15%;
-  width: 50%;
-  aspect-ratio: 1 / 1;
+.aura__card--2 {
+  /* Wide cinematic, mid-right, overlaps card 1 from upper-right */
+  top: 16%;
+  right: -2%;
+  width: 68%;
+  aspect-ratio: 16 / 10;
+  z-index: 3;
 }
 
-/* Asset 4 — full-width video anchored to bottom */
-.aura__asset--4 {
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100vh;
-  border: none;
+.aura__card--3 {
+  /* Square, mid-left, overlaps card 2 */
+  top: 42%;
+  left: 10%;
+  width: 60%;
+  aspect-ratio: 1 / 1;
+  z-index: 4;
+}
+
+.aura__card--4 {
+  /* Portrait video, lower-right, overlaps card 3 */
+  top: 64%;
+  right: 4%;
+  width: 56%;
+  aspect-ratio: 3 / 4;
+  z-index: 2;
+}
+
+/* ── Closing finale — chapter mark + final CTA stack at section bottom ── */
+.aura__finale {
+  position: absolute;
+  bottom: 6vh;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  text-align: center;
+}
+
+.aura__chapter-eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(239, 228, 207, 0.45);
+  pointer-events: none;
+}
+
+.aura__chapter-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(18px, 1.6vw, 26px);
+  letter-spacing: 0.05em;
+  color: rgba(239, 228, 207, 0.78);
+  pointer-events: none;
+  margin-bottom: 8px;
+}
+
+/* Finale CTA — same glass pill, centered (override left-align variant) */
+.aura__cta--finale {
+  align-self: center;
 }
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
+  .aura {
+    min-height: 230vh;
+  }
   .aura__grid {
-    grid-template-columns: 45% 55%;
-    padding: 8vh 4vw;
+    grid-template-columns: 42% 58%;
+    gap: 3vw;
+    padding: 0 4vw;
   }
   .aura__headline {
-    font-size: clamp(44px, 6vw, 100px);
+    font-size: clamp(44px, 6vw, 96px);
+  }
+  .aura__right {
+    height: 200vh;
   }
 }
 
 @media (max-width: 768px) {
   .aura {
-    min-height: 600vh;
+    min-height: 280vh;
   }
   .aura__grid {
     grid-template-columns: 1fr;
-    padding: 6vh 5vw;
-    min-height: 600vh;
+    grid-template-rows: auto auto;
+    gap: 5vh;
+    padding: 8vh 5vw 0;
   }
-  .aura__left {
+  .aura__left-inner {
     position: relative;
-    top: auto;
-    padding-right: 0;
-    padding-bottom: 6vh;
-    gap: 20px;
+    top: 0;
+    gap: 16px;
   }
   .aura__body {
     max-width: 100%;
+    font-size: 0.92rem;
   }
   .aura__right {
-    height: 380vh;
+    height: 200vh;
   }
-  .aura__asset--1 { width: 75%; }
-  .aura__asset--2 { width: 95%; right: 0; }
-  .aura__asset--3 { width: 55%; left: 10%; }
-  .aura__asset--4 { height: 80vh; }
+  .aura__card--1 { top: 0%;  left: 2%;  width: 80%; }
+  .aura__card--2 { top: 22%; right: 0;  width: 92%; }
+  .aura__card--3 { top: 46%; left: 8%;  width: 78%; }
+  .aura__card--4 { top: 70%; right: 2%; width: 80%; }
+  .aura__card-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aura__asset {
-    will-change: auto;
-  }
+  .aura__card { will-change: auto; }
 }
